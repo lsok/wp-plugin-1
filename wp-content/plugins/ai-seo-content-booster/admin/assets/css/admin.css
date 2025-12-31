@@ -1,0 +1,270 @@
+/**
+ * Admin styles
+ */
+
+/* Tab Navigation */
+.nav-tab-wrapper {
+	margin-bottom: 20px;
+}
+
+.nav-tab-wrapper .nav-tab {
+	outline: none;
+	box-shadow: none;
+}
+
+.nav-tab-wrapper .nav-tab:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.nav-tab-wrapper .nav-tab:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.tab-content {
+	display: none;
+}
+
+.tab-content.active {
+	display: block;
+}
+
+/* Switch Toggle */
+.aiscb-switch {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 24px;
+}
+
+.aiscb-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.aiscb-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: 0.4s;
+	border-radius: 24px;
+}
+
+.aiscb-slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.4s;
+	border-radius: 50%;
+}
+
+.aiscb-switch input:checked + .aiscb-slider {
+	background-color: #2271b1;
+}
+
+.aiscb-switch input:checked + .aiscb-slider:before {
+	transform: translateX(26px);
+}
+
+.aiscb-switch input:focus + .aiscb-slider {
+	box-shadow: 0 0 1px #2271b1;
+}
+
+/* Modal Styles */
+.aiscb-modal {
+	display: none;
+	position: fixed;
+	z-index: 100000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.aiscb-modal-content {
+	background-color: #fefefe;
+	margin: 5% auto;
+	padding: 0;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 800px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.aiscb-modal-header {
+	padding: 15px 20px;
+	background-color: #f0f0f1;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.aiscb-modal-header h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.aiscb-modal-close {
+	color: #aaa;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.aiscb-modal-close:hover,
+.aiscb-modal-close:focus {
+	color: #000;
+}
+
+.aiscb-modal-body {
+	padding: 20px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.aiscb-modal-footer {
+	padding: 15px 20px;
+	background-color: #f0f0f1;
+	border-top: 1px solid #ddd;
+	text-align: right;
+}
+
+.aiscb-modal-footer .button {
+	margin-left: 10px;
+}
+
+/* Keywords Toolbar */
+.aiscb-keywords-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+.aiscb-toolbar-left {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.aiscb-toolbar-right {
+	display: flex;
+	align-items: center;
+}
+
+#aiscb-keywords-search {
+	margin: 0;
+	min-width: 250px;
+}
+
+/* Keywords Table */
+#aiscb-keywords-table {
+	margin-top: 15px;
+}
+
+#aiscb-keywords-table td,
+#aiscb-keywords-table th {
+	padding: 10px;
+}
+
+#aiscb-keywords-table .column-actions {
+	text-align: right;
+}
+
+#aiscb-keywords-table .button {
+	margin-left: 5px;
+}
+
+#aiscb-keywords-table .check-column {
+	width: 30px;
+	text-align: center;
+}
+
+/* Status badges */
+.status-processed {
+	display: inline-block;
+	padding: 3px 8px;
+	background-color: #00a32a;
+	color: #fff;
+	border-radius: 3px;
+	font-size: 12px;
+}
+
+.status-unprocessed {
+	display: inline-block;
+	padding: 3px 8px;
+	background-color: #d63638;
+	color: #fff;
+	border-radius: 3px;
+	font-size: 12px;
+}
+
+/* Pagination */
+.aiscb-pagination {
+	margin-top: 20px;
+	padding-top: 15px;
+	border-top: 1px solid #ddd;
+}
+
+.aiscb-pagination-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	justify-content: center;
+}
+
+.aiscb-pagination-info {
+	font-size: 13px;
+	color: #646970;
+}
+
+.aiscb-pagination-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Spinner */
+#aiscb-keywords-spinner {
+	vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+	.aiscb-keywords-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+	}
+	
+	.aiscb-toolbar-left,
+	.aiscb-toolbar-right {
+		width: 100%;
+	}
+	
+	#aiscb-keywords-search {
+		width: 100%;
+	}
+	
+	.aiscb-pagination-wrapper {
+		flex-direction: column;
+		gap: 10px;
+	}
+}
+

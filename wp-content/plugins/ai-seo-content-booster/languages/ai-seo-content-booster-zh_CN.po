@@ -1,0 +1,198 @@
+# Chinese (Simplified) translation for AI SEO Content Booster
+# Copyright (C) 2024 AI SEO Content Booster
+# This file is distributed under the same license as the AI SEO Content Booster plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: AI SEO Content Booster 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-12-16 14:19+0800\n"
+"Last-Translator: \n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.8\n"
+
+#: admin/views/settings.php:28
+msgid "关键词设置"
+msgstr "关键词设置"
+
+#: admin/views/settings.php:31
+msgid "密钥设置"
+msgstr "密钥设置"
+
+#: admin/views/settings.php:34
+msgid "文章发布设置"
+msgstr "文章发布设置"
+
+#: admin/views/settings.php:47
+msgid "推荐关键词"
+msgstr "推荐关键词"
+
+#: admin/views/settings.php:52
+msgid "获取推荐关键词"
+msgstr "获取推荐关键词"
+
+#: admin/views/settings.php:57
+msgid "根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+msgstr "根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+
+#: admin/views/settings.php:63
+msgid "关键词列表"
+msgstr "关键词列表"
+
+#: admin/views/settings.php:71
+msgid "关键词之间用逗号分隔"
+msgstr "关键词之间用逗号分隔"
+
+#: admin/views/settings.php:74
+msgid "每个关键词用逗号分隔"
+msgstr "每个关键词用逗号分隔"
+
+#: admin/views/settings.php:82 admin/views/settings.php:254
+msgid "手动设置关键词"
+msgstr "手动设置关键词"
+
+#: admin/views/settings.php:91 admin/views/settings.php:143
+#: admin/views/settings.php:243 admin/views/settings.php:281
+#: admin/views/settings.php:318
+msgid "保存"
+msgstr "保存"
+
+#: admin/views/settings.php:106
+msgid "Gemini API Key"
+msgstr "Gemini API Key"
+
+#: admin/views/settings.php:117
+msgid "输入您的 Gemini API 密钥"
+msgstr "输入您的 Gemini API 密钥"
+
+#: admin/views/settings.php:123
+msgid "Facebook API Key"
+msgstr "Facebook API Key"
+
+#: admin/views/settings.php:134
+msgid "输入您的 Facebook API 密钥"
+msgstr "输入您的 Facebook API 密钥"
+
+#: admin/views/settings.php:158
+msgid "文章类别"
+msgstr "文章类别"
+
+#: admin/views/settings.php:165
+msgid "-- 选择类别 --"
+msgstr "-- 选择类别 --"
+
+#: admin/views/settings.php:173
+msgid "选择自动发布文章所属的类别"
+msgstr "选择自动发布文章所属的类别"
+
+#: admin/views/settings.php:179
+msgid "发布频率"
+msgstr "发布频率"
+
+#: admin/views/settings.php:184
+msgid "每天"
+msgstr "每天"
+
+#: admin/views/settings.php:187
+msgid "每周"
+msgstr "每周"
+
+#: admin/views/settings.php:190
+msgid "每周两次"
+msgstr "每周两次"
+
+#: admin/views/settings.php:193
+msgid "每月"
+msgstr "每月"
+
+#: admin/views/settings.php:197
+msgid "选择文章自动发布的频率"
+msgstr "选择文章自动发布的频率"
+
+#: admin/views/settings.php:203
+msgid "发布时间"
+msgstr "发布时间"
+
+#: admin/views/settings.php:214
+msgid "设置每天发布文章的时间（小时:分钟）"
+msgstr "设置每天发布文章的时间（小时:分钟）"
+
+#: admin/views/settings.php:220
+msgid "启动/停止"
+msgstr "启动/停止"
+
+#: admin/views/settings.php:234
+msgid "开启或关闭自动发布功能"
+msgstr "开启或关闭自动发布功能"
+
+#: admin/views/settings.php:260
+msgid "添加"
+msgstr "添加"
+
+#: admin/views/settings.php:267 admin/views/settings.php:302
+msgid "关键词"
+msgstr "关键词"
+
+#: admin/views/settings.php:270
+msgid "操作"
+msgstr "操作"
+
+#: admin/views/settings.php:284 admin/views/settings.php:321
+msgid "取消"
+msgstr "取消"
+
+#: admin/views/settings.php:294
+msgid "添加关键词"
+msgstr "添加关键词"
+
+#: admin/views/settings.php:309
+msgid "输入关键词"
+msgstr "输入关键词"
+
+#: includes/class-admin.php:31
+msgid "AI SEO Content Booster"
+msgstr "AI SEO Content Booster"
+
+#: includes/class-admin.php:32
+msgid "AI SEO Booster"
+msgstr "AI SEO Booster"
+
+#: includes/class-admin.php:42 includes/class-admin.php:43
+msgid "Settings"
+msgstr "设置"
+
+# JavaScript translations
+msgid "获取关键词功能待实现"
+msgstr "获取关键词功能待实现"
+
+msgid "暂无关键词"
+msgstr "暂无关键词"
+
+msgid "修改"
+msgstr "修改"
+
+msgid "删除"
+msgstr "删除"
+
+msgid "确定要删除这个关键词吗？"
+msgstr "确定要删除这个关键词吗？"
+
+msgid "请输入关键词"
+msgstr "请输入关键词"
+
+msgid "该关键词已存在"
+msgstr "该关键词已存在"
+
+msgid "保存功能待实现"
+msgstr "保存功能待实现"
+
+msgid "修改关键词"
+msgstr "修改关键词"
+
+
+

@@ -1,0 +1,207 @@
+# English (US) translation for AI SEO Content Booster
+# Copyright (C) 2024 AI SEO Content Booster
+# This file is distributed under the same license as the AI SEO Content Booster plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: AI SEO Content Booster 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-12-16 14:19+0800\n"
+"Last-Translator: \n"
+"Language-Team: English (US)\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.8\n"
+
+#: admin/views/settings.php:28
+msgid "关键词设置"
+msgstr "Keywords Settings"
+
+#: admin/views/settings.php:31
+msgid "密钥设置"
+msgstr "API Keys Settings"
+
+#: admin/views/settings.php:34
+msgid "文章发布设置"
+msgstr "Article Publishing Settings"
+
+#: admin/views/settings.php:47
+msgid "推荐关键词"
+msgstr "Recommended Keywords"
+
+#: admin/views/settings.php:52
+msgid "获取推荐关键词"
+msgstr "Get Recommended Keywords"
+
+#: admin/views/settings.php:57
+msgid ""
+"根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+msgstr ""
+"Automatically generate keyword list based on homepage title, description, "
+"and WooCommerce product names"
+
+#: admin/views/settings.php:63
+msgid "关键词列表"
+msgstr "Keywords List"
+
+#: admin/views/settings.php:71
+msgid "关键词之间用逗号分隔"
+msgstr "Separate keywords with commas"
+
+#: admin/views/settings.php:74
+msgid "每个关键词用逗号分隔"
+msgstr "Separate each keyword with a comma"
+
+#: admin/views/settings.php:82 admin/views/settings.php:254
+msgid "手动设置关键词"
+msgstr "Manage Keywords Manually"
+
+#: admin/views/settings.php:91 admin/views/settings.php:143
+#: admin/views/settings.php:243 admin/views/settings.php:281
+#: admin/views/settings.php:318
+msgid "保存"
+msgstr "Save"
+
+#: admin/views/settings.php:106
+msgid "Gemini API Key"
+msgstr "Gemini API Key"
+
+#: admin/views/settings.php:117
+msgid "输入您的 Gemini API 密钥"
+msgstr "Enter your Gemini API key"
+
+#: admin/views/settings.php:123
+msgid "Facebook API Key"
+msgstr "Facebook API Key"
+
+#: admin/views/settings.php:134
+msgid "输入您的 Facebook API 密钥"
+msgstr "Enter your Facebook API key"
+
+#: admin/views/settings.php:158
+msgid "文章类别"
+msgstr "Article Category"
+
+#: admin/views/settings.php:165
+msgid "-- 选择类别 --"
+msgstr "-- Select Category --"
+
+#: admin/views/settings.php:173
+msgid "选择自动发布文章所属的类别"
+msgstr "Select the category for automatically published articles"
+
+#: admin/views/settings.php:179
+msgid "发布频率"
+msgstr "Publishing Frequency"
+
+#: admin/views/settings.php:184
+msgid "每天"
+msgstr "Daily"
+
+#: admin/views/settings.php:187
+msgid "每周"
+msgstr "Weekly"
+
+#: admin/views/settings.php:190
+msgid "每周两次"
+msgstr "Twice Weekly"
+
+#: admin/views/settings.php:193
+msgid "每月"
+msgstr "Monthly"
+
+#: admin/views/settings.php:197
+msgid "选择文章自动发布的频率"
+msgstr "Select the frequency for automatic article publishing"
+
+#: admin/views/settings.php:203
+msgid "发布时间"
+msgstr "Publishing Time"
+
+#: admin/views/settings.php:214
+msgid "设置每天发布文章的时间（小时:分钟）"
+msgstr "Set the time to publish articles each day (hour:minute)"
+
+#: admin/views/settings.php:220
+msgid "启动/停止"
+msgstr "Enable/Disable"
+
+#: admin/views/settings.php:234
+msgid "开启或关闭自动发布功能"
+msgstr "Enable or disable automatic publishing"
+
+#: admin/views/settings.php:260
+msgid "添加"
+msgstr "Add"
+
+#: admin/views/settings.php:267 admin/views/settings.php:302
+msgid "关键词"
+msgstr "Keyword"
+
+#: admin/views/settings.php:270
+msgid "操作"
+msgstr "Actions"
+
+#: admin/views/settings.php:284 admin/views/settings.php:321
+msgid "取消"
+msgstr "Cancel"
+
+#: admin/views/settings.php:294
+msgid "添加关键词"
+msgstr "Add Keyword"
+
+#: admin/views/settings.php:309
+msgid "输入关键词"
+msgstr "Enter keyword"
+
+#: includes/class-admin.php:31
+msgid "AI SEO Content Booster"
+msgstr "AI SEO Content Booster"
+
+#: includes/class-admin.php:32
+msgid "AI SEO Booster"
+msgstr "AI SEO Booster"
+
+#: includes/class-admin.php:42 includes/class-admin.php:43
+msgid "Settings"
+msgstr "Settings"
+
+# JavaScript translations
+msgid "获取关键词功能待实现"
+msgstr "Get keywords feature is pending implementation"
+
+msgid "暂无关键词"
+msgstr "No keywords yet"
+
+msgid "修改"
+msgstr "Edit"
+
+msgid "删除"
+msgstr "Delete"
+
+msgid "确定要删除这个关键词吗？"
+msgstr "Are you sure you want to delete this keyword?"
+
+msgid "请输入关键词"
+msgstr "Please enter a keyword"
+
+msgid "该关键词已存在"
+msgstr "This keyword already exists"
+
+msgid "保存功能待实现"
+msgstr "Save feature is pending implementation"
+
+msgid "修改关键词"
+msgstr "Edit Keyword"
+
+msgid "已处理"
+msgstr "Processed"
+
+msgid "未处理"
+msgstr "Unprocessed"
+
+
+
