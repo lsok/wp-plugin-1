@@ -11,18 +11,7 @@
 	}
 
 	// Get translations from localized script
-	var i18n = (typeof aiscbAdmin !== 'undefined' && aiscbAdmin.i18n) ? aiscbAdmin.i18n : {
-		getKeywordsPending: '获取关键词功能待实现',
-		noKeywords: '暂无关键词',
-		edit: '修改',
-		delete: '删除',
-		confirmDelete: '确定要删除这个关键词吗？',
-		enterKeyword: '请输入关键词',
-		keywordExists: '该关键词已存在',
-		savePending: '保存功能待实现',
-		addKeyword: '添加关键词',
-		editKeyword: '修改关键词'
-	};
+	var i18n = aiscbAdmin.i18n;
 
 	// Tab switching
 	$('.nav-tab').on('click', function(e) {
@@ -69,7 +58,7 @@
 		search = search || '';
 		
 		var $tbody = $('#aiscb-keywords-tbody');
-		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;"></span> ' + escapeHtml('加载中...') + '</td></tr>');
+		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster') + '</td></tr>');
 		
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -176,7 +165,7 @@
 	function updateBulkDeleteButton() {
 		var checkedCount = $('.aiscb-keyword-checkbox:checked').length;
 		if (checkedCount > 0) {
-			$('#aiscb-bulk-delete-btn').show().text('批量删除 (' + checkedCount + ')');
+			$('#aiscb-bulk-delete-btn').show().text( i18n.batchDelete + '(' + checkedCount + ')');
 		} else {
 			$('#aiscb-bulk-delete-btn').hide();
 		}

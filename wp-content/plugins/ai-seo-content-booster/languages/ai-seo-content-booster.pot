@@ -1,18 +1,44 @@
-# Copyright (C) 2024 AI SEO Content Booster
+# Copyright (C) 2026 YOUR NAME HERE
 # This file is distributed under the same license as the AI SEO Content Booster plugin.
 msgid ""
 msgstr ""
 "Project-Id-Version: AI SEO Content Booster 0.1.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-01 12:00+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ai-seo-content-booster\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"POT-Creation-Date: 2026-01-01T07:58:41+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ai-seo-content-booster\n"
+
+#. Plugin Name of the plugin
+#: ai-seo-content-booster.php
+#: includes/class-admin.php:38
+msgid "AI SEO Content Booster"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: ai-seo-content-booster.php
+msgid "PLUGIN SITE HERE"
+msgstr ""
+
+#. Description of the plugin
+#: ai-seo-content-booster.php
+msgid "PLUGIN DESCRIPTION HERE"
+msgstr ""
+
+#. Author of the plugin
+#: ai-seo-content-booster.php
+msgid "YOUR NAME HERE"
+msgstr ""
+
+#. Author URI of the plugin
+#: ai-seo-content-booster.php
+msgid "YOUR SITE HERE"
+msgstr ""
 
 #: admin/views/settings.php:28
 msgid "关键词设置"
@@ -51,14 +77,14 @@ msgid "每个关键词用逗号分隔"
 msgstr ""
 
 #: admin/views/settings.php:82
+#: admin/views/settings.php:254
 msgid "手动设置关键词"
 msgstr ""
 
 #: admin/views/settings.php:91
 #: admin/views/settings.php:143
 #: admin/views/settings.php:243
-#: admin/views/settings.php:281
-#: admin/views/settings.php:318
+#: admin/views/settings.php:337
 msgid "保存"
 msgstr ""
 
@@ -130,86 +156,148 @@ msgstr ""
 msgid "开启或关闭自动发布功能"
 msgstr ""
 
-#: admin/views/settings.php:254
-msgid "手动设置关键词"
-msgstr ""
-
-#: admin/views/settings.php:260
+#: admin/views/settings.php:261
 msgid "添加"
 msgstr ""
 
-#: admin/views/settings.php:267
-#: admin/views/settings.php:302
+#: admin/views/settings.php:264
+msgid "批量删除"
+msgstr ""
+
+#: admin/views/settings.php:272
+#: includes/class-admin.php:73
+msgid "搜索关键词"
+msgstr ""
+
+#: admin/views/settings.php:283
+#: admin/views/settings.php:321
 msgid "关键词"
 msgstr ""
 
-#: admin/views/settings.php:270
+#: admin/views/settings.php:286
+msgid "状态"
+msgstr ""
+
+#: admin/views/settings.php:289
 msgid "操作"
 msgstr ""
 
-#: admin/views/settings.php:284
-#: admin/views/settings.php:321
-msgid "取消"
+#: admin/views/settings.php:303
+msgid "关闭"
 msgstr ""
 
-#: admin/views/settings.php:294
+#: admin/views/settings.php:313
+#: includes/class-admin.php:71
 msgid "添加关键词"
 msgstr ""
 
-#: admin/views/settings.php:309
+#: admin/views/settings.php:328
 msgid "输入关键词"
 msgstr ""
 
-#: includes/class-admin.php:31
-msgid "AI SEO Content Booster"
+#: admin/views/settings.php:340
+msgid "取消"
 msgstr ""
 
-#: includes/class-admin.php:32
+#: includes/class-admin.php:39
 msgid "AI SEO Booster"
 msgstr ""
 
-#: includes/class-admin.php:42
-#: includes/class-admin.php:43
-msgid "Settings"
-msgstr ""
-
-# JavaScript translations
+#: includes/class-admin.php:63
 msgid "获取关键词功能待实现"
 msgstr ""
 
+#: includes/class-admin.php:64
 msgid "暂无关键词"
 msgstr ""
 
+#: includes/class-admin.php:65
 msgid "修改"
 msgstr ""
 
+#: includes/class-admin.php:66
 msgid "删除"
 msgstr ""
 
+#: includes/class-admin.php:67
 msgid "确定要删除这个关键词吗？"
 msgstr ""
 
+#: includes/class-admin.php:68
+#: includes/class-admin.php:100
 msgid "请输入关键词"
 msgstr ""
 
+#: includes/class-admin.php:69
+#: includes/class-admin.php:113
+#: includes/class-admin.php:160
 msgid "该关键词已存在"
 msgstr ""
 
+#: includes/class-admin.php:70
 msgid "保存功能待实现"
 msgstr ""
 
-msgid "添加关键词"
-msgstr ""
-
+#: includes/class-admin.php:72
 msgid "修改关键词"
 msgstr ""
 
+#: includes/class-admin.php:74
+msgid "已处理"
+msgstr ""
 
+#: includes/class-admin.php:75
+msgid "未处理"
+msgstr ""
 
+#: includes/class-admin.php:94
+#: includes/class-admin.php:139
+#: includes/class-admin.php:185
+#: includes/class-admin.php:230
+#: includes/class-admin.php:264
+msgid "权限不足"
+msgstr ""
 
+#: includes/class-admin.php:127
+msgid "添加失败"
+msgstr ""
 
+#: includes/class-admin.php:130
+msgid "添加成功"
+msgstr ""
 
+#: includes/class-admin.php:146
+#: includes/class-admin.php:236
+#: includes/class-admin.php:270
+msgid "参数错误"
+msgstr ""
 
+#: includes/class-admin.php:172
+msgid "编辑失败"
+msgstr ""
 
+#: includes/class-admin.php:175
+msgid "编辑成功"
+msgstr ""
 
+#: includes/class-admin.php:251
+msgid "删除失败"
+msgstr ""
 
+#: includes/class-admin.php:254
+msgid "删除成功"
+msgstr ""
+
+#: includes/class-admin.php:284
+msgid "批量删除失败"
+msgstr ""
+
+#. translators: %d: 成功删除的关键词数量
+#: includes/class-admin.php:288
+#, php-format
+msgid "成功删除 %d 个关键词"
+msgstr ""
+
+#: admin/assets/js/admin.js:72
+msgid "加载中..."
+msgstr ""

@@ -269,7 +269,7 @@ $is_active = get_option( 'aiscb_is_active', false );
 						type="search" 
 						id="aiscb-keywords-search" 
 						class="regular-text" 
-						placeholder="<?php esc_attr_e( 'Search keywords', 'ai-seo-content-booster' ); ?>"
+						placeholder="<?php esc_attr_e( '搜索关键词', 'ai-seo-content-booster' ); ?>"
 					/>
 				</div>
 			</div>
