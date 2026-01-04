@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin class
  *
@@ -13,12 +14,14 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Admin class
  */
-class AISCB_Admin {
+class AISCB_Admin
+{
 
 	/**
 	 * Initialize the admin
 	 */
-	public function init() {
+	public function init()
+	{
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 
@@ -33,7 +36,8 @@ class AISCB_Admin {
 	/**
 	 * Add admin menu
 	 */
-	public function add_admin_menu() {
+	public function add_admin_menu()
+	{
 		add_menu_page(
 			__( 'AI SEO Content Booster', 'ai-seo-content-booster' ),
 			__( 'AI SEO Booster', 'ai-seo-content-booster' ),
@@ -48,33 +52,52 @@ class AISCB_Admin {
 	/**
 	 * Enqueue admin assets
 	 */
-	public function enqueue_admin_assets( $hook ) {
+	public function enqueue_admin_assets( $hook )
+	{
 		if ( strpos( $hook, 'toplevel_page_ai-seo-content-booster' ) === false ) {
 			return;
 		}
 
 		wp_enqueue_script( 'aiscb-admin-js', plugin_dir_url( dirname( __FILE__ ) ) . 'admin/assets/js/admin.js', array( 'jquery', 'wp-i18n' ), '1.0.0', true );
-		wp_enqueue_style( 'aiscb-admin-css', plugin_dir_url( dirname( __FILE__ ) ) . 'admin/assets/css/admin.css', array(), '1.0.0' );
+		wp_enqueue_style( 'aiscb-admin-css', plugin_dir_url( dirname( __FILE__ ) ) . 'admin/assets/css/admin.css', array( ), '1.0.0' );
 
 		wp_localize_script( 'aiscb-admin-js', 'aiscbAdmin', array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'nonce'   => wp_create_nonce( 'aiscb_admin_nonce' ),
 			'i18n'    => array(
-				'loading'            => __( '加载中...', 'ai-seo-content-booster' ),	
-				'getKeywordsPending' => __( '获取关键词功能待实现', 'ai-seo-content-booster' ),
-				'noKeywords'         => __( '暂无关键词', 'ai-seo-content-booster' ),
-				'edit'               => __( '修改', 'ai-seo-content-booster' ),
-				'delete'             => __( '删除', 'ai-seo-content-booster' ),
-				'confirmDelete'      => __( '确定要删除这个关键词吗？', 'ai-seo-content-booster' ),
-				'enterKeyword'       => __( '请输入关键词', 'ai-seo-content-booster' ),
-				'keywordExists'      => __( '该关键词已存在', 'ai-seo-content-booster' ),
-				'savePending'        => __( '保存功能待实现', 'ai-seo-content-booster' ),
-				'addKeyword'         => __( '添加关键词', 'ai-seo-content-booster' ),
-				'editKeyword'        => __( '修改关键词', 'ai-seo-content-booster' ),
-				'searchKeywords'     => __( '搜索关键词', 'ai-seo-content-booster' ),
-				'batchDelete'        => __( '批量删除', 'ai-seo-content-booster' ),
-				'processed'          => __( '已处理', 'ai-seo-content-booster' ),
-				'unprocessed'        => __( '未处理', 'ai-seo-content-booster' ),
+				'loading'                 => __( '加载中...', 'ai-seo-content-booster' ),
+				'getKeywordsPending'      => __( '获取关键词功能待实现', 'ai-seo-content-booster' ),
+				'noKeywords'              => __( '暂无关键词', 'ai-seo-content-booster' ),
+				'edit'                    => __( '修改', 'ai-seo-content-booster' ),
+				'delete'                  => __( '删除', 'ai-seo-content-booster' ),
+				'confirmDelete'           => __( '确定要删除这个关键词吗？', 'ai-seo-content-booster' ),
+				'enterKeyword'            => __( '请输入关键词', 'ai-seo-content-booster' ),
+				'keywordExists'           => __( '该关键词已存在', 'ai-seo-content-booster' ),
+				'savePending'             => __( '保存功能待实现', 'ai-seo-content-booster' ),
+				'addKeyword'              => __( '添加关键词', 'ai-seo-content-booster' ),
+				'editKeyword'             => __( '修改关键词', 'ai-seo-content-booster' ),
+				'searchKeywords'          => __( '搜索关键词', 'ai-seo-content-booster' ),
+				'batchDelete'             => __( '批量删除', 'ai-seo-content-booster' ),
+				'processed'               => __( '已处理', 'ai-seo-content-booster' ),
+				'unprocessed'             => __( '未处理', 'ai-seo-content-booster' ),
+				'loadFailed'              => __( '加载失败', 'ai-seo-content-booster' ),
+				'networkError'            => __( '网络错误，请重试', 'ai-seo-content-booster' ),
+				'prevPage'                => __( '上一页', 'ai-seo-content-booster' ),
+				'pagePrefix'              => __( '第 ', 'ai-seo-content-booster' ),
+				'pageSeparator'           => __( ' 页，共 ', 'ai-seo-content-booster' ),
+				'pageSuffix'              => __( ' 页', 'ai-seo-content-booster' ),
+				'totalItemsPrefix'        => __( '（共 ', 'ai-seo-content-booster' ),
+				'totalItemsSuffix'        => __( ' 条）', 'ai-seo-content-booster' ),
+				'nextPage'                => __( '下一页', 'ai-seo-content-booster' ),
+				'deleteFailed'            => __( '删除失败', 'ai-seo-content-booster' ),
+				'saving'                  => __( '保存中...', 'ai-seo-content-booster' ),
+				'operationSuccess'        => __( '操作成功', 'ai-seo-content-booster' ),
+				'operationFailed'         => __( '操作失败', 'ai-seo-content-booster' ),
+				'networkErrorWithMsg'     => __( '网络错误，请重试。错误信息: ', 'ai-seo-content-booster' ),
+				'selectKeywordsToDelete'  => __( '请选择要删除的关键词', 'ai-seo-content-booster' ),
+				'confirmDeleteBulkPrefix' => __( '确定要删除选中的 ', 'ai-seo-content-booster' ),
+				'confirmDeleteBulkSuffix' => __( ' 个关键词吗？', 'ai-seo-content-booster' ),
+				'deleteSuccess'           => __( '删除成功', 'ai-seo-content-booster' ),
 			),
 		) );
 	}
@@ -82,14 +105,16 @@ class AISCB_Admin {
 	/**
 	 * Admin page callback
 	 */
-	public function admin_page() {
+	public function admin_page()
+	{
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/settings.php';
 	}
 
 	/**
 	 * AJAX handler: Add keyword
 	 */
-	public function ajax_add_keyword() {
+	public function ajax_add_keyword()
+	{
 		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -131,10 +156,12 @@ class AISCB_Admin {
 
 		wp_send_json_success( array( 'message' => __( '添加成功', 'ai-seo-content-booster' ) ) );
 	}
+
 	/**
 	 * AJAX handler: Edit keyword
 	 */
-	public function ajax_edit_keyword() {
+	public function ajax_edit_keyword()
+	{
 		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -180,7 +207,8 @@ class AISCB_Admin {
 	/**
 	 * AJAX handler: Get keywords
 	 */
-	public function ajax_get_keywords() {
+	public function ajax_get_keywords()
+	{
 		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -225,7 +253,8 @@ class AISCB_Admin {
 	/**
 	 * AJAX handler: Delete keyword
 	 */
-	public function ajax_delete_keyword() {
+	public function ajax_delete_keyword()
+	{
 		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -259,14 +288,15 @@ class AISCB_Admin {
 	/**
 	 * AJAX handler: Bulk delete keywords
 	 */
-	public function ajax_bulk_delete_keywords() {
+	public function ajax_bulk_delete_keywords()
+	{
 		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( '权限不足', 'ai-seo-content-booster' ) ) );
 		}
 
-		$keyword_ids = isset( $_POST['keyword_ids'] ) ? array_map( 'absint', $_POST['keyword_ids'] ) : array();
+		$keyword_ids = isset( $_POST['keyword_ids'] ) ? array_map( 'absint', $_POST['keyword_ids'] ) : array( );
 
 		if ( empty( $keyword_ids ) ) {
 			wp_send_json_error( array( 'message' => __( '参数错误', 'ai-seo-content-booster' ) ) );

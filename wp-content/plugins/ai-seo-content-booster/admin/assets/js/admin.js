@@ -58,7 +58,7 @@
 		search = search || '';
 		
 		var $tbody = $('#aiscb-keywords-tbody');
-		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster') + '</td></tr>');
+		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster') + '</td></tr>');
 		
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -79,7 +79,7 @@
 					renderPagination(response.data.pagination);
 					updateBulkDeleteButton();
 				} else {
-					var errorMsg = response.data && response.data.message ? response.data.message : '加载失败';
+					var errorMsg = response.data && response.data.message ? response.data.message : i18n.loadFailed;
 					console.error('Load keywords error:', errorMsg);
 					$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #d63638;">' + escapeHtml(errorMsg) + '</td></tr>');
 				}
@@ -87,7 +87,7 @@
 			error: function(xhr, status, error) {
 				console.error('AJAX Error:', status, error);
 				console.error('Response:', xhr.responseText);
-				$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #d63638;">' + escapeHtml('网络错误，请重试') + '</td></tr>');
+				$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #d63638;">' + escapeHtml(i18n.networkError) + '</td></tr>');
 			}
 		});
 	}
@@ -139,22 +139,22 @@
 		
 		// Previous button
 		if (pagination.current_page > 1) {
-			html += '<button type="button" class="button aiscb-pagination-btn" data-page="' + (pagination.current_page - 1) + '">' + escapeHtml('上一页') + '</button>';
+			html += '<button type="button" class="button aiscb-pagination-btn" data-page="' + (pagination.current_page - 1) + '">' + escapeHtml(i18n.prevPage) + '</button>';
 		} else {
-			html += '<button type="button" class="button aiscb-pagination-btn" disabled>' + escapeHtml('上一页') + '</button>';
+			html += '<button type="button" class="button aiscb-pagination-btn" disabled>' + escapeHtml(i18n.prevPage) + '</button>';
 		}
 		
 		// Page numbers
 		html += '<span class="aiscb-pagination-info">';
-		html += escapeHtml('第 ' + pagination.current_page + ' 页，共 ' + pagination.total_pages + ' 页');
-		html += '（共 ' + pagination.total_items + ' 条）';
+		html += escapeHtml(i18n.pagePrefix + pagination.current_page + i18n.pageSeparator + pagination.total_pages + i18n.pageSuffix);
+		html += i18n.totalItemsPrefix + pagination.total_items + i18n.totalItemsSuffix;
 		html += '</span>';
 		
 		// Next button
 		if (pagination.current_page < pagination.total_pages) {
-			html += '<button type="button" class="button aiscb-pagination-btn" data-page="' + (pagination.current_page + 1) + '">' + escapeHtml('下一页') + '</button>';
+			html += '<button type="button" class="button aiscb-pagination-btn" data-page="' + (pagination.current_page + 1) + '">' + escapeHtml(i18n.nextPage) + '</button>';
 		} else {
-			html += '<button type="button" class="button aiscb-pagination-btn" disabled>' + escapeHtml('下一页') + '</button>';
+			html += '<button type="button" class="button aiscb-pagination-btn" disabled>' + escapeHtml(i18n.nextPage) + '</button>';
 		}
 		
 		html += '</div>';
@@ -194,8 +194,12 @@
 	});
 
 	// Close modal
-	$('.aiscb-modal-close, #aiscb-cancel-keywords-modal-btn, #aiscb-cancel-keyword-btn').on('click', function() {
-		$('.aiscb-modal').hide();
+	$('.aiscb-modal-close, #aiscb-cancel-keyword-btn').on('click', function() {
+		if ( $(this).attr('id') === 'aiscb-cancel-keyword-btn' ) {
+			$('#aiscb-keyword-edit-modal').hide();
+		} else {
+			$('.aiscb-modal').hide();
+		}
 		$('#aiscb-keyword-input').val('').removeData('keyword-id');
 		$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
 		$('#aiscb-select-all-keywords').prop('checked', false);
@@ -248,11 +252,11 @@
 				if (response.success) {
 					loadKeywords(currentPage, currentSearch);
 				} else {
-					alert(response.data.message || '删除失败');
+					alert(response.data.message || i18n.deleteFailed);
 				}
 			},
 			error: function() {
-				alert('网络错误，请重试');
+				alert(i18n.networkError);
 			}
 		});
 	});
@@ -282,7 +286,7 @@
 		// Show loading state
 		var $btn = $(this);
 		var originalText = $btn.text();
-		$btn.prop('disabled', true).text('保存中...');
+		$btn.prop('disabled', true).text(i18n.saving);
 		
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -297,9 +301,9 @@
 					$('#aiscb-keyword-input').val('').removeData('keyword-id');
 					$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
 					loadKeywords(currentPage, currentSearch);
-					alert(response.data.message || '操作成功');
+					//alert(response.data.message || i18n.operationSuccess);
 				} else {
-					var errorMsg = response.data && response.data.message ? response.data.message : '操作失败';
+					var errorMsg = response.data && response.data.message ? response.data.message : i18n.operationFailed;
 					console.error('Save keyword error:', errorMsg);
 					alert(errorMsg);
 				}
@@ -308,7 +312,7 @@
 				console.error('AJAX Error:', status, error);
 				console.error('Response:', xhr.responseText);
 				$btn.prop('disabled', false).text(originalText);
-				alert('网络错误，请重试。错误信息: ' + error);
+				alert(i18n.networkErrorWithMsg + error);
 			}
 		});
 	});
@@ -363,11 +367,11 @@
 		});
 		
 		if (checkedIds.length === 0) {
-			alert('请选择要删除的关键词');
+			alert(i18n.selectKeywordsToDelete);
 			return;
 		}
 		
-		if (!confirm('确定要删除选中的 ' + checkedIds.length + ' 个关键词吗？')) {
+		if (!confirm(i18n.confirmDeleteBulkPrefix + checkedIds.length + i18n.confirmDeleteBulkSuffix)) {
 			return;
 		}
 		
@@ -383,13 +387,14 @@
 				if (response.success) {
 					$('#aiscb-select-all-keywords').prop('checked', false);
 					loadKeywords(currentPage, currentSearch);
-					alert(response.data.message || '删除成功');
+					//alert(response.data.message || i18n.deleteSuccess);
+					alert(i18n.deleteSuccess);
 				} else {
-					alert(response.data.message || '删除失败');
+					alert(response.data.message || i18n.deleteFailed);
 				}
 			},
 			error: function() {
-				alert('网络错误，请重试');
+				alert(i18n.networkError);
 			}
 		});
 	});

@@ -301,3 +301,76 @@ msgstr ""
 #: admin/assets/js/admin.js:72
 msgid "加载中..."
 msgstr ""
+
+#: includes/class-admin.php:76
+msgid "加载失败"
+msgstr ""
+
+#: includes/class-admin.php:77
+msgid "网络错误，请重试"
+msgstr ""
+
+#: includes/class-admin.php:78
+msgid "上一页"
+msgstr ""
+
+#: includes/class-admin.php:79
+msgid "第 "
+msgstr ""
+
+#: includes/class-admin.php:80
+msgid " 页，共 "
+msgstr ""
+
+#: includes/class-admin.php:81
+msgid " 页"
+msgstr ""
+
+#: includes/class-admin.php:82
+msgid "（共 "
+msgstr ""
+
+#: includes/class-admin.php:83
+msgid " 条）"
+msgstr ""
+
+#: includes/class-admin.php:84
+msgid "下一页"
+msgstr ""
+
+#: includes/class-admin.php:85
+msgid "删除失败"
+msgstr ""
+
+#: includes/class-admin.php:86
+msgid "保存中..."
+msgstr ""
+
+#: includes/class-admin.php:87
+msgid "操作成功"
+msgstr ""
+
+#: includes/class-admin.php:88
+msgid "操作失败"
+msgstr ""
+
+#: includes/class-admin.php:89
+msgid "网络错误，请重试。错误信息: "
+msgstr ""
+
+#: includes/class-admin.php:90
+msgid "请选择要删除的关键词"
+msgstr ""
+
+#: includes/class-admin.php:91
+msgid "确定要删除选中的 "
+msgstr ""
+
+#: includes/class-admin.php:92
+msgid " 个关键词吗？"
+msgstr ""
+
+#: includes/class-admin.php:93
+msgid "删除成功"
+msgstr ""
+

@@ -302,3 +302,75 @@ msgstr "成功删除 %d 个关键词"
 #: admin/assets/js/admin.js:72
 msgid "加载中..."
 msgstr "加载中..."
+
+#: includes/class-admin.php:76
+msgid "加载失败"
+msgstr "加载失败"
+
+#: includes/class-admin.php:77
+msgid "网络错误，请重试"
+msgstr "网络错误，请重试"
+
+#: includes/class-admin.php:78
+msgid "上一页"
+msgstr "上一页"
+
+#: includes/class-admin.php:79
+msgid "第 "
+msgstr "第 "
+
+#: includes/class-admin.php:80
+msgid " 页，共 "
+msgstr " 页，共 "
+
+#: includes/class-admin.php:81
+msgid " 页"
+msgstr " 页"
+
+#: includes/class-admin.php:82
+msgid "（共 "
+msgstr "（共 "
+
+#: includes/class-admin.php:83
+msgid " 条）"
+msgstr " 条）"
+
+#: includes/class-admin.php:84
+msgid "下一页"
+msgstr "下一页"
+
+#: includes/class-admin.php:85
+msgid "删除失败"
+msgstr "删除失败"
+
+#: includes/class-admin.php:86
+msgid "保存中..."
+msgstr "保存中..."
+
+#: includes/class-admin.php:87
+msgid "操作成功"
+msgstr "操作成功"
+
+#: includes/class-admin.php:88
+msgid "操作失败"
+msgstr "操作失败"
+
+#: includes/class-admin.php:89
+msgid "网络错误，请重试。错误信息: "
+msgstr "网络错误，请重试。错误信息: "
+
+#: includes/class-admin.php:90
+msgid "请选择要删除的关键词"
+msgstr "请选择要删除的关键词"
+
+#: includes/class-admin.php:91
+msgid "确定要删除选中的 "
+msgstr "确定要删除选中的 "
+
+#: includes/class-admin.php:92
+msgid " 个关键词吗？"
+msgstr " 个关键词吗？"
+
+#: includes/class-admin.php:93
+msgid "删除成功"
+msgstr "删除成功"
