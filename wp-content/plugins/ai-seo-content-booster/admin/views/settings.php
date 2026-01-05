@@ -63,16 +63,7 @@ $is_active = get_option( 'aiscb_is_active', false );
 							<label for="aiscb_keywords_list"><?php esc_html_e( '关键词列表', 'ai-seo-content-booster' ); ?></label>
 						</th>
 						<td>
-							<textarea 
-								name="aiscb_keywords" 
-								id="aiscb_keywords_list" 
-								rows="10" 
-								class="large-text code"
-								placeholder="<?php esc_attr_e( '关键词之间用逗号分隔', 'ai-seo-content-booster' ); ?>"
-							><?php echo esc_textarea( $keywords ); ?></textarea>
-							<p class="description">
-								<?php esc_html_e( '每个关键词用逗号分隔', 'ai-seo-content-booster' ); ?>
-							</p>
+							<div id="existing-keywords"></div>
 						</td>
 					</tr>
 					<tr>

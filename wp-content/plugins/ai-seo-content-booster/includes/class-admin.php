@@ -27,6 +27,7 @@ class AISCB_Admin
 
 		// AJAX handlers
 		add_action( 'wp_ajax_aiscb_get_keywords', array( $this, 'ajax_get_keywords' ) );
+		add_action( 'wp_ajax_aiscb_get_existing_keywords', array( $this, 'ajax_get_existing_keywords' ) );
 		add_action( 'wp_ajax_aiscb_add_keyword', array( $this, 'ajax_add_keyword' ) );
 		add_action( 'wp_ajax_aiscb_edit_keyword', array( $this, 'ajax_edit_keyword' ) );
 		add_action( 'wp_ajax_aiscb_delete_keyword', array( $this, 'ajax_delete_keyword' ) );
@@ -247,6 +248,29 @@ class AISCB_Admin
 				'total_items' => $total,
 				'per_page' => $per_page,
 			),
+		) );
+	}
+
+	/**
+	 * AJAX handler: Get existing keywords
+	 */
+	public function ajax_get_existing_keywords()
+	{
+		check_ajax_referer( 'aiscb_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( '权限不足', 'ai-seo-content-booster' ) ) );
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_keywords';
+
+		$keywords = $wpdb->get_results( 
+			"SELECT id, keyword FROM {$table_name} WHERE is_deleted = 0 ORDER BY created_at DESC LIMIT 15"
+		);
+
+		wp_send_json_success( array(
+			'keywords' => $keywords,
 		) );
 	}
 
