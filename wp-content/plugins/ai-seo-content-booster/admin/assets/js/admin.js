@@ -69,11 +69,12 @@
 					var keywords = response.data.keywords;
 					var keywordStrings = keywords.map(function (kw) { return kw.keyword; });
 					if (keywordStrings.length === 0) {
-						$existingKeywords.html('<p>' + escapeHtml(i18n.noKeywords) + '</p>');
+						var existingKeywordsHtml = escapeHtml(i18n.noKeywords);
 					} else {
 						var keywordList = keywordStrings.join(', ');
-						$existingKeywords.html('<p>' + escapeHtml(keywordList) + '...</p>');
+						var existingKeywordsHtml = escapeHtml(keywordList) + '...';
 					}
+					$existingKeywords.html('<p>' + existingKeywordsHtml + '</p>');
 				} else {
 					var errorMsg = response.data && response.data.message ? response.data.message : i18n.loadFailed;
 					console.error('Load existing keywords error:', errorMsg);
@@ -254,7 +255,9 @@
 	// Add keyword button
 	$('#aiscb-add-keyword-btn').on('click', function () {
 		$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
-		$('#aiscb-keyword-input').val('');
+		$('#aiscb-keyword-input').val('').show();
+		$('#aiscb-keyword-input-single').hide().removeData('keyword-id');
+		$('#aiscb-keyword-description').show();
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -263,7 +266,9 @@
 		var keywordId = $(this).data('keyword-id');
 		var keyword = $(this).data('keyword');
 		$('#aiscb-keyword-edit-title').text(i18n.editKeyword);
-		$('#aiscb-keyword-input').val(keyword).data('keyword-id', keywordId);
+		$('#aiscb-keyword-input-single').val(keyword).data('keyword-id', keywordId).show();
+		$('#aiscb-keyword-input').hide();
+		$('#aiscb-keyword-description').hide();
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -300,59 +305,109 @@
 
 	// Save keyword (add or edit)
 	$('#aiscb-save-keyword-btn').on('click', function () {
-		var keyword = $('#aiscb-keyword-input').val().trim();
-		if (!keyword) {
+		var isEdit = !!$('#aiscb-keyword-input-single').data('keyword-id');
+		var keywordInput = isEdit ? $('#aiscb-keyword-input-single').val().trim() : $('#aiscb-keyword-input').val().trim();
+		if (!keywordInput) {
 			alert(i18n.enterKeyword);
 			return;
 		}
 
-		var keywordId = $('#aiscb-keyword-input').data('keyword-id');
-		var action = keywordId ? 'aiscb_edit_keyword' : 'aiscb_add_keyword';
-		var data = {
-			action: action,
-			nonce: aiscbAdmin.nonce,
-			keyword: keyword
-		};
+		if (isEdit) {
+			// Edit single keyword
+			var keywordId = $('#aiscb-keyword-input-single').data('keyword-id');
+			
+			var data = {
+				action: 'aiscb_edit_keyword',
+				nonce: aiscbAdmin.nonce,
+				keyword: keywordInput,
+				keyword_id: keywordId
+			};
 
-		if (keywordId) {
-			data.keyword_id = keywordId;
-		}
+			console.log('Editing keyword:', data);
 
-		console.log('Saving keyword:', data);
+			// Show loading state
+			var $btn = $(this);
+			var originalText = $btn.text();
+			$btn.prop('disabled', true).text(i18n.saving);
 
-		// Show loading state
-		var $btn = $(this);
-		var originalText = $btn.text();
-		$btn.prop('disabled', true).text(i18n.saving);
+			$.ajax({
+				url: aiscbAdmin.ajaxUrl,
+				type: 'POST',
+				data: data,
+				success: function (response) {
+					console.log('Edit keyword response:', response);
+					$btn.prop('disabled', false).text(originalText);
 
-		$.ajax({
-			url: aiscbAdmin.ajaxUrl,
-			type: 'POST',
-			data: data,
-			success: function (response) {
-				console.log('Save keyword response:', response);
-				$btn.prop('disabled', false).text(originalText);
-
-				if (response.success) {
-					$('#aiscb-keyword-edit-modal').hide();
-					$('#aiscb-keyword-input').val('').removeData('keyword-id');
-					$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
-					loadKeywords(currentPage, currentSearch);
-					existingKeywords(); // Refresh existing keywords list
-					//alert(response.data.message || i18n.operationSuccess);
-				} else {
-					var errorMsg = response.data && response.data.message ? response.data.message : i18n.operationFailed;
-					console.error('Save keyword error:', errorMsg);
-					alert(errorMsg);
+					if (response.success) {
+						$('#aiscb-keyword-edit-modal').hide();
+						$('#aiscb-keyword-input').val('').show();
+						$('#aiscb-keyword-input-single').val('').hide().removeData('keyword-id');
+						$('#aiscb-keyword-description').show();
+						$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
+						loadKeywords(currentPage, currentSearch);
+						existingKeywords(); // Refresh existing keywords list
+						//alert(response.data.message || i18n.operationSuccess);
+					} else {
+						var errorMsg = response.data && response.data.message ? response.data.message : i18n.operationFailed;
+						console.error('Edit keyword error:', errorMsg);
+						alert(errorMsg);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.error('Response:', xhr.responseText);
+					$btn.prop('disabled', false).text(originalText);
+					alert(i18n.networkErrorWithMsg + error);
 				}
-			},
-			error: function (xhr, status, error) {
-				console.error('AJAX Error:', status, error);
-				console.error('Response:', xhr.responseText);
-				$btn.prop('disabled', false).text(originalText);
-				alert(i18n.networkErrorWithMsg + error);
+			});
+		} else {
+			// Add multiple keywords (batch)
+			var keywords = keywordInput.split('\n').map(function(kw) { return kw.trim(); }).filter(function(kw) { return kw.length > 0; });
+			if (keywords.length === 0) {
+				alert(i18n.enterKeyword);
+				return;
 			}
-		});
+
+			console.log('Adding keywords:', keywords);
+
+			// Show loading state
+			var $btn = $(this);
+			var originalText = $btn.text();
+			$btn.prop('disabled', true).text(i18n.saving);
+
+			var data = {
+				action: 'aiscb_add_keywords_batch',
+				nonce: aiscbAdmin.nonce,
+				keywords: keywords
+			};
+
+			$.ajax({
+				url: aiscbAdmin.ajaxUrl,
+				type: 'POST',
+				data: data,
+				success: function (response) {
+					console.log('Batch add response:', response);
+					$btn.prop('disabled', false).text(originalText);
+
+					if (response.success) {
+						$('#aiscb-keyword-edit-modal').hide();
+						$('#aiscb-keyword-input').val('').show();
+						$('#aiscb-keyword-input-single').val('').hide().removeData('keyword-id');
+						$('#aiscb-keyword-description').show();
+						loadKeywords(currentPage, currentSearch);
+						existingKeywords(); // Refresh existing keywords list
+						alert(response.data.message);
+					} else {
+						alert(response.data.message || i18n.operationFailed);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					$btn.prop('disabled', false).text(originalText);
+					alert(i18n.networkError);
+				}
+			});
+		}
 	});
 
 	// Save keywords from modal (close modal)
@@ -426,8 +481,7 @@
 					$('#aiscb-select-all-keywords').prop('checked', false);
 					loadKeywords(currentPage, currentSearch);
 					existingKeywords(); // Refresh existing keywords list
-					//alert(response.data.message || i18n.deleteSuccess);
-					alert(i18n.deleteSuccess);
+					alert(response.data.message);
 				} else {
 					alert(response.data.message || i18n.deleteFailed);
 				}

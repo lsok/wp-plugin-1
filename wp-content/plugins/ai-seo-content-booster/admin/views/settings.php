@@ -299,7 +299,7 @@ $is_active = get_option( 'aiscb_is_active', false );
 
 <!-- Modal for Add/Edit Keyword -->
 <div id="aiscb-keyword-edit-modal" class="aiscb-modal" style="display: none;">
-	<div class="aiscb-modal-content" style="max-width: 500px;">
+	<div class="aiscb-modal-content" style="max-width: 600px;">
 		<div class="aiscb-modal-header">
 			<h2 id="aiscb-keyword-edit-title"><?php esc_html_e( '添加关键词', 'ai-seo-content-booster' ); ?></h2>
 			<span class="aiscb-modal-close">&times;</span>
@@ -314,10 +314,21 @@ $is_active = get_option( 'aiscb_is_active', false );
 						<td>
 							<input 
 								type="text" 
-								id="aiscb-keyword-input" 
+								id="aiscb-keyword-input-single" 
 								class="regular-text" 
 								placeholder="<?php esc_attr_e( '输入关键词', 'ai-seo-content-booster' ); ?>"
+								style="display: none;"
 							/>
+							<textarea 
+								id="aiscb-keyword-input" 
+								class="regular-text" 
+								placeholder="<?php esc_attr_e( '输入关键词，每行一个', 'ai-seo-content-booster' ); ?>"
+								rows="5"
+								style="width: 100%;"
+							></textarea>
+							<p class="description" id="aiscb-keyword-description">
+								<?php esc_html_e( '每行输入一个关键词，或从其他文档复制粘贴多个关键词。', 'ai-seo-content-booster' ); ?>
+							</p>
 						</td>
 					</tr>
 				</tbody>

@@ -374,3 +374,12 @@ msgstr " keywords?"
 #: includes/class-admin.php:93
 msgid "删除成功"
 msgstr "Delete successful"
+
+#: includes/class-admin.php:216
+msgid "Successfully added %d keyword"
+msgid_plural "Successfully added %d keywords"
+
+#: includes/class-admin.php:217
+msgid "%d keyword are repeated"
+msgid_plural "%d keywords are repeated"
+
