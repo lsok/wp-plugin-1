@@ -261,6 +261,120 @@
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
+
+	// Import keywords: show import modal
+	$('#aiscb-import-keywords-btn').on('click', function () {
+		$('#aiscb-import-modal').show();
+	});
+
+	// Cancel import or close modal
+	$('#aiscb-cancel-import-btn').on('click', function () {
+		$('#aiscb-import-modal').hide();
+		$('#aiscb-import-file').val('');
+	});
+
+	// Close modal when clicking close icon
+	$(document).on('click', '#aiscb-import-modal .aiscb-modal-close', function () {
+		$('#aiscb-import-modal').hide();
+		$('#aiscb-import-file').val('');
+	});
+
+	// When user selects a file, request headers (preview) to populate column select
+	$('#aiscb-import-file').on('change', function () {
+		var input = this;
+		if (!input.files || input.files.length === 0) {
+			return;
+		}
+
+		var file = input.files[0];
+		var formData = new FormData();
+		formData.append('action', 'aiscb_import_preview');
+		formData.append('nonce', aiscbAdmin.nonce);
+		formData.append('keyword_file', file);
+
+		var $selectWrap = $('#aiscb-import-column-wrap');
+		var $select = $('#aiscb-import-column-select');
+		$selectWrap.hide();
+		$select.empty();
+
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function (response) {
+				if (response.success && response.data && Array.isArray(response.data.headers) && response.data.headers.length > 0) {
+					var headers = response.data.headers;
+					$select.append('<option value="">' + escapeHtml('请选择列') + '</option>');
+					headers.forEach(function (h, idx) {
+						$select.append('<option value="' + idx + '">' + escapeHtml(h) + '</option>');
+					});
+					$selectWrap.show();
+				} else {
+					alert(response.data && response.data.message ? response.data.message : i18n.loadFailed);
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error('Preview AJAX Error:', status, error);
+				alert(i18n.networkError);
+			}
+		});
+	});
+
+	// Perform import when user clicks import in modal
+	$('#aiscb-do-import-btn').on('click', function () {
+		var input = document.getElementById('aiscb-import-file');
+		if (!input || !input.files || input.files.length === 0) {
+			alert(i18n.enterKeyword);
+			return;
+		}
+
+		var colIndex = $('#aiscb-import-column-select').val();
+		if (!colIndex && colIndex !== '0') {
+			alert('请选择要导入的列');
+			return;
+		}
+
+		var file = input.files[0];
+		var formData = new FormData();
+		formData.append('action', 'aiscb_import_keywords');
+		formData.append('nonce', aiscbAdmin.nonce);
+		formData.append('keyword_file', file);
+		formData.append('col_index', colIndex);
+
+		// Disable import button while uploading
+		var $btn = $('#aiscb-do-import-btn');
+		var originalText = $btn.text();
+		$btn.prop('disabled', true).text(i18n.loading);
+
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function (response) {
+				$btn.prop('disabled', false).text(originalText);
+				if (response.success) {
+					alert(response.data.message || i18n.operationSuccess);
+					$('#aiscb-import-modal').hide();
+					$('#aiscb-import-file').val('');
+					$('#aiscb-import-column-wrap').hide();
+					loadKeywords(currentPage, currentSearch);
+					existingKeywords();
+				} else {
+					alert(response.data && response.data.message ? response.data.message : i18n.operationFailed);
+				}
+			},
+			error: function (xhr, status, error) {
+				$btn.prop('disabled', false).text(originalText);
+				console.error('Import AJAX Error:', status, error);
+				alert(i18n.networkError);
+			}
+		});
+	});
+
 	// Edit keyword
 	$(document).on('click', '.aiscb-edit-keyword', function () {
 		var keywordId = $(this).data('keyword-id');

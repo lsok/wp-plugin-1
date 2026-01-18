@@ -30,6 +30,8 @@ class AISCB_Admin
 		add_action('wp_ajax_aiscb_get_existing_keywords', array($this, 'ajax_get_existing_keywords'));
 		add_action('wp_ajax_aiscb_add_keyword', array($this, 'ajax_add_keyword'));
 		add_action('wp_ajax_aiscb_add_keywords_batch', array($this, 'ajax_add_keywords_batch'));
+		add_action('wp_ajax_aiscb_import_keywords', array($this, 'ajax_import_keywords'));
+		add_action('wp_ajax_aiscb_import_preview', array($this, 'ajax_import_preview'));
 		add_action('wp_ajax_aiscb_edit_keyword', array($this, 'ajax_edit_keyword'));
 		add_action('wp_ajax_aiscb_delete_keyword', array($this, 'ajax_delete_keyword'));
 		add_action('wp_ajax_aiscb_bulk_delete_keywords', array($this, 'ajax_bulk_delete_keywords'));
@@ -67,7 +69,6 @@ class AISCB_Admin
 			'ajaxUrl' => admin_url('admin-ajax.php'),
 			'nonce'   => wp_create_nonce('aiscb_admin_nonce'),
 			'i18n'    => array(
-				'loading'                 => __('加载中...', 'ai-seo-content-booster'),
 				'getKeywordsPending'      => __('获取关键词功能待实现', 'ai-seo-content-booster'),
 				'noKeywords'              => __('暂无关键词', 'ai-seo-content-booster'),
 				'edit'                    => __('修改', 'ai-seo-content-booster'),
@@ -220,6 +221,245 @@ class AISCB_Admin
 		}
 
 		wp_send_json_success(array('message' => $message));
+	}
+
+	/**
+	 * AJAX handler: Import keywords from Excel (SimpleXLSX)
+	 */
+	public function ajax_import_keywords()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		if (empty($_FILES['keyword_file']) || $_FILES['keyword_file']['error'] !== UPLOAD_ERR_OK) {
+			wp_send_json_error(array('message' => __('未找到上传的文件或上传失败', 'ai-seo-content-booster')));
+		}
+
+		$file = $_FILES['keyword_file'];
+		$tmp_name = $file['tmp_name'];
+		$filename = $file['name'];
+
+		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+		if (! in_array($ext, array('xlsx', 'xls', 'csv'))) {
+			wp_send_json_error(array('message' => __('仅支持 xls/xlsx/csv 文件', 'ai-seo-content-booster')));
+		}
+
+		$vendor_file = plugin_dir_path(dirname(__FILE__)) . 'vendor/SimpleXLSX.php';
+		if (! file_exists($vendor_file)) {
+			wp_send_json_error(array('message' => __('SimpleXLSX 库未找到', 'ai-seo-content-booster')));
+		}
+
+		require_once $vendor_file;
+
+		// SimpleXLSX may be namespaced. Support both global and Shuchkin\SimpleXLSX
+		$keywords = array();
+		try {
+			$selected_col = isset($_POST['col_index']) ? intval($_POST['col_index']) : null;
+			if ($ext === 'csv') {
+				if (($handle = fopen($tmp_name, 'r')) !== false) {
+					// Read header
+					$header = fgetcsv($handle);
+					$colIndex = 0;
+					if ($header && is_array($header)) {
+						if ($selected_col !== null) {
+							$colIndex = $selected_col;
+						} else {
+							// find header matching '关键词' or 'keywords'
+							foreach ($header as $idx => $h) {
+								$h_trim = trim(mb_strtolower((string) $h));
+								if ($h_trim === '关键词' || $h_trim === 'keywords') {
+									$colIndex = $idx;
+									break;
+								}
+							}
+						}
+					}
+					// read remaining rows
+					while (($row = fgetcsv($handle)) !== false) {
+						if (isset($row[$colIndex])) {
+							$kw = sanitize_text_field(trim((string) $row[$colIndex]));
+							if ($kw !== '') {
+								$keywords[] = $kw;
+							}
+						}
+					}
+					fclose($handle);
+				} else {
+					wp_send_json_error(array('message' => __('无法打开 CSV 文件', 'ai-seo-content-booster')));
+				}
+			} else {
+				if (class_exists('Shuchkin\\SimpleXLSX')) {
+					$xlsx = \Shuchkin\SimpleXLSX::parse($tmp_name);
+				} elseif (class_exists('SimpleXLSX')) {
+					$xlsx = SimpleXLSX::parse($tmp_name);
+				} else {
+					wp_send_json_error(array('message' => __('SimpleXLSX 类不可用', 'ai-seo-content-booster')));
+				}
+
+				if ($xlsx === false) {
+					wp_send_json_error(array('message' => __('解析 Excel 文件失败', 'ai-seo-content-booster')));
+				}
+
+				$rows = $xlsx->rows();
+				if (!empty($rows)) {
+					// first row is header
+					$header = $rows[0];
+					$colIndex = 0;
+					if ($selected_col !== null) {
+						$colIndex = $selected_col;
+					} else {
+						foreach ($header as $idx => $h) {
+							$h_trim = trim(mb_strtolower((string) $h));
+							if ($h_trim === '关键词' || $h_trim === 'keywords') {
+								$colIndex = $idx;
+								break;
+							}
+						}
+					}
+					// iterate rows skipping header
+					for ($i = 1; $i < count($rows); $i++) {
+						$row = $rows[$i];
+						if (isset($row[$colIndex])) {
+							$kw = sanitize_text_field(trim((string) $row[$colIndex]));
+							if ($kw !== '') {
+								$keywords[] = $kw;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception $e) {
+			wp_send_json_error(array('message' => __('解析 Excel/CSV 文件出错: ', 'ai-seo-content-booster') . $e->getMessage()));
+		}
+
+		if (empty($keywords)) {
+			wp_send_json_error(array('message' => __('未从文件中读取到关键词', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_keywords';
+		$success_count = 0;
+		$repeat_count = 0;
+
+		foreach ($keywords as $keyword) {
+			$keyword = sanitize_text_field(trim($keyword));
+			if (empty($keyword)) {
+				continue;
+			}
+
+			$exists = $wpdb->get_var($wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table_name} WHERE keyword = %s AND is_deleted = 0",
+				$keyword
+			));
+
+			if ($exists > 0) {
+				$repeat_count++;
+				continue;
+			}
+
+			$result = $wpdb->insert(
+				$table_name,
+				array(
+					'keyword' => $keyword,
+					'status' => 'unprocessed',
+					'is_deleted' => 0,
+				),
+				array('%s', '%s', '%d')
+			);
+
+			if ($result !== false) {
+				$success_count++;
+			}
+		}
+
+		if ($repeat_count > 0) {
+			/* _n()函数用于处理英文单复数(即 keyword 和 keywords) */
+			$message = sprintf(_n('Successfully added %d keyword', 'Successfully added %d keywords', $success_count, 'ai-seo-content-booster'), $success_count) . ', ' . sprintf(_n('%d keyword are repeated', '%d keywords are repeated', $repeat_count, 'ai-seo-content-booster'), $repeat_count);
+		} else {
+			$message = sprintf(_n('Successfully added %d keyword', 'Successfully added %d keywords', $success_count, 'ai-seo-content-booster'), $success_count);
+		}
+
+		wp_send_json_success(array('message' => $message));
+	}
+
+	/**
+	 * AJAX handler: Preview uploaded file headers
+	 */
+	public function ajax_import_preview()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		if (empty($_FILES['keyword_file']) || $_FILES['keyword_file']['error'] !== UPLOAD_ERR_OK) {
+			wp_send_json_error(array('message' => __('未找到上传的文件或上传失败', 'ai-seo-content-booster')));
+		}
+
+		$file = $_FILES['keyword_file'];
+		$tmp_name = $file['tmp_name'];
+		$filename = $file['name'];
+
+		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+		if (! in_array($ext, array('xlsx', 'xls', 'csv'))) {
+			wp_send_json_error(array('message' => __('仅支持 xls/xlsx/csv 文件', 'ai-seo-content-booster')));
+		}
+
+		$vendor_file = plugin_dir_path(dirname(__FILE__)) . 'vendor/SimpleXLSX.php';
+		if (! file_exists($vendor_file) && $ext !== 'csv') {
+			wp_send_json_error(array('message' => __('SimpleXLSX 库未找到', 'ai-seo-content-booster')));
+		}
+
+		$headers = array();
+		try {
+			if ($ext === 'csv') {
+				if (($handle = fopen($tmp_name, 'r')) !== false) {
+					$header = fgetcsv($handle);
+					if ($header && is_array($header)) {
+						foreach ($header as $h) {
+							$headers[] = trim((string) $h);
+						}
+					}
+					fclose($handle);
+				} else {
+					wp_send_json_error(array('message' => __('无法打开 CSV 文件', 'ai-seo-content-booster')));
+				}
+			} else {
+				require_once $vendor_file;
+
+				if (class_exists('Shuchkin\\SimpleXLSX')) {
+					$xlsx = \Shuchkin\SimpleXLSX::parse($tmp_name);
+				} elseif (class_exists('SimpleXLSX')) {
+					$xlsx = SimpleXLSX::parse($tmp_name);
+				} else {
+					wp_send_json_error(array('message' => __('SimpleXLSX 类不可用', 'ai-seo-content-booster')));
+				}
+
+				if ($xlsx === false) {
+					wp_send_json_error(array('message' => __('解析 Excel 文件失败', 'ai-seo-content-booster')));
+				}
+
+				$rows = $xlsx->rows();
+				if (!empty($rows)) {
+					$header = $rows[0];
+					foreach ($header as $h) {
+						$headers[] = trim((string) $h);
+					}
+				}
+			}
+		} catch (Exception $e) {
+			wp_send_json_error(array('message' => __('解析文件出错: ', 'ai-seo-content-booster') . $e->getMessage()));
+		}
+
+		if (empty($headers)) {
+			wp_send_json_error(array('message' => __('未读取到表头', 'ai-seo-content-booster')));
+		}
+
+		wp_send_json_success(array('headers' => $headers));
 	}
 
 	/**

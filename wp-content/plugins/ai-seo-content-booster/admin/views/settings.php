@@ -251,6 +251,9 @@ $is_active = get_option( 'aiscb_is_active', false );
 					<button type="button" class="button button-primary" id="aiscb-add-keyword-btn">
 						<?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?>
 					</button>
+					<button type="button" class="button" id="aiscb-import-keywords-btn">
+						<?php esc_html_e( '导入', 'ai-seo-content-booster' ); ?>
+					</button>
 					<button type="button" class="button" id="aiscb-bulk-delete-btn" style="display: none;">
 						<?php esc_html_e( '批量删除', 'ai-seo-content-booster' ); ?>
 					</button>
@@ -344,4 +347,39 @@ $is_active = get_option( 'aiscb_is_active', false );
 		</div>
 	</div>
 </div>
+
+		<!-- Modal for Import Keywords -->
+		<div id="aiscb-import-modal" class="aiscb-modal" style="display: none;">
+			<div class="aiscb-modal-content" style="max-width: 600px;">
+				<div class="aiscb-modal-header">
+					<h2><?php esc_html_e( '导入关键词', 'ai-seo-content-booster' ); ?></h2>
+					<span class="aiscb-modal-close">&times;</span>
+				</div>
+				<div class="aiscb-modal-body">
+					<table class="form-table">
+						<tbody>
+							<tr>
+								<th scope="row">
+									<label for="aiscb-import-file"><?php esc_html_e( '选择文件', 'ai-seo-content-booster' ); ?></label>
+								</th>
+								<td>
+									<input type="file" id="aiscb-import-file" accept=".xls,.xlsx,.csv" />
+									<p class="description" style="margin-top:8px;">
+										<?php esc_html_e( '支持格式：.xlsx, .xls, .csv', 'ai-seo-content-booster' ); ?>
+									</p>
+									<div id="aiscb-import-column-wrap" style="margin-top:10px; display:none;">
+										<label for="aiscb-import-column-select"><?php esc_html_e( '选择要导入的列', 'ai-seo-content-booster' ); ?></label>
+										<select id="aiscb-import-column-select" style="display:block; width:50%; margin-top:6px;"></select>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="aiscb-modal-footer">
+					<button type="button" class="button button-primary" id="aiscb-do-import-btn"><?php esc_html_e( '导入', 'ai-seo-content-booster' ); ?></button>
+					<button type="button" class="button" id="aiscb-cancel-import-btn"><?php esc_html_e( '取消', 'ai-seo-content-booster' ); ?></button>
+				</div>
+			</div>
+		</div>
 
