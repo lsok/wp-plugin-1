@@ -690,7 +690,14 @@ class AISCB_Admin
 				$sanitized_attachments[] = array('type' => $type, 'id' => $id, 'url' => $url);
 			} elseif (is_array($att) && isset($att['url'])) {
 				$url = esc_url_raw($att['url']);
-				$type = preg_match('/video|\.mp4|\.webm/i', $url) ? 'video' : 'file';
+				// Detect image by common extensions first, then video, else file
+				if (preg_match('/\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i', $url)) {
+					$type = 'image';
+				} elseif (preg_match('/video|\.mp4|\.webm|\.mov|\.avi/i', $url)) {
+					$type = 'video';
+				} else {
+					$type = 'file';
+				}
 				$sanitized_attachments[] = array('type' => $type, 'url' => $url);
 			}
 		}

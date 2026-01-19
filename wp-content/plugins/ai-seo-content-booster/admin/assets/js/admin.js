@@ -650,6 +650,44 @@ var aiscbSocialAttachments = [];
 		frame.open();
 	});
 
+// Manual URL input for attachments: show/hide and add/cancel handlers
+$(document).on('click', '#aiscb-add-attachment-url-link', function (e) {
+		e.preventDefault();
+		var $wrap = $('#aiscb-add-attachment-url-wrap');
+		$wrap.toggle();
+		if ($wrap.is(':visible')) { $('#aiscb-attachment-url-input').focus(); }
+});
+
+// Cancel manual URL input
+$(document).on('click', '#aiscb-attachment-url-cancel-btn', function (e) {
+		e.preventDefault();
+ 		$('#aiscb-attachment-url-input').val('');
+ 		$('#aiscb-add-attachment-url-wrap').hide();
+});
+
+// Add manual URL as attachment
+$(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
+		e.preventDefault();
+ 		var url = ($('#aiscb-attachment-url-input').val() || '').trim();
+ 		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
+
+ 		// Basic URL validation
+ 		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
+
+ 		// Guess mime by extension
+ 		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
+ 		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
+ 		var mime = '';
+ 		if (imgExt.test(url)) { mime = 'image/*'; }
+ 		else if (vidExt.test(url)) { mime = 'video/*'; }
+
+ 		aiscbSocialAttachments.push({ id: 0, url: url, mime: mime });
+ 		renderAiscbAttachments();
+ 		// hide and clear input
+ 		$('#aiscb-attachment-url-input').val('');
+ 		$('#aiscb-add-attachment-url-wrap').hide();
+});
+
 	// Render attachments list
 	function renderAiscbAttachments() {
 		var $wrap = $('#aiscb-attachments-list');
@@ -661,13 +699,17 @@ var aiscbSocialAttachments = [];
 
 		aiscbSocialAttachments.forEach(function (att, idx) {
 			var $item = $('<div class="aiscb-attachment-item" data-idx="' + idx + '" style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"></div>');
-			// If image show thumbnail
-			if (att.mime && att.mime.indexOf('image') === 0 && att.url) {
-				$item.append('<img src="' + att.url + '" style="max-width:120px; max-height:80px; object-fit:cover;" alt="attachment" />');
-			} else if (att.mime && att.mime.indexOf('video') === 0 && att.url) {
-				$item.append('<div style="word-break:break-all;">' + escapeHtml(att.url) + '</div>');
-			} else if (att.url) {
-				$item.append('<div style="word-break:break-all;">' + escapeHtml(att.url) + '</div>');
+
+			var url = att.url || '';
+			var isImage = (att.mime && att.mime.indexOf('image') === 0) || /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i.test(url);
+			var isVideo = (att.mime && att.mime.indexOf('video') === 0) || /video|\.mp4|\.webm|\.ogg|\.mov|\.avi/i.test(url);
+
+			if (isImage && url) {
+				$item.append('<img src="' + url + '" style="max-width:120px; max-height:80px; object-fit:cover;" alt="attachment" />');
+			} else if (isVideo && url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
+			} else if (url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
 			} else {
 				$item.append('<div>' + escapeHtml(i18n.noAttachments || '暂无附件') + '</div>');
 			}

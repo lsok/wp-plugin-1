@@ -148,6 +148,12 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 								<div id="aiscb-attachments-list"></div>
 								<p>
 									<button type="button" class="button" id="aiscb-add-attachment-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+									<a href="#" id="aiscb-add-attachment-url-link" style="margin-left:10px;"><?php esc_html_e( '手工输入附件url', 'ai-seo-content-booster' ); ?></a>
+									<div id="aiscb-add-attachment-url-wrap" style="display:none; margin-top:10px;">
+										<input type="text" id="aiscb-attachment-url-input" class="regular-text" placeholder="https://example.com/image.jpg" style="width:60%;" />
+										<button type="button" class="button" id="aiscb-attachment-url-add-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+										<button type="button" class="button" id="aiscb-attachment-url-cancel-btn"><?php esc_html_e( '取消', 'ai-seo-content-booster' ); ?></button>
+									</div>
 								</p>
 								<p class="description">
 									<?php esc_html_e( '可添加多个图片或视频', 'ai-seo-content-booster' ); ?>
