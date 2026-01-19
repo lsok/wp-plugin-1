@@ -42,8 +42,8 @@ msgid "YOUR SITE HERE"
 msgstr "您的站点"
 
 #: admin/views/settings.php:28
-msgid "关键词设置"
-msgstr "关键词设置"
+msgid "关键词管理"
+msgstr "关键词管理"
 
 #: admin/views/settings.php:31
 msgid "密钥设置"

@@ -275,3 +275,41 @@
 }
 
 #aiscb-keyword-edit-modal .form-table th { width: 100px; }
+
+/* Posts header (list and form) alignment */
+.aiscb-posts-header {
+	margin-top: 0;
+	margin-bottom: 20px; /* match .nav-tab-wrapper spacing */
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+/* Posts header links */
+.aiscb-posts-all-link,
+.aiscb-posts-add-link {
+	text-decoration: none;
+	color: #2271b1;
+}
+
+.aiscb-posts-add-link {
+	margin-left: 6px;
+}
+
+/* Active link style: black and bold */
+.aiscb-posts-all-link.active,
+.aiscb-posts-add-link.active {
+	color: #000;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+/* Remove focus/outline when clicking the header links */
+.aiscb-posts-all-link:focus,
+.aiscb-posts-add-link:focus,
+.aiscb-posts-all-link:active,
+.aiscb-posts-add-link:active {
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+}

@@ -18,6 +18,10 @@ $article_category = get_option( 'aiscb_article_category', '' );
 $publish_frequency = get_option( 'aiscb_publish_frequency', 'daily' );
 $publish_time = get_option( 'aiscb_publish_time', '09:00' );
 $is_active = get_option( 'aiscb_is_active', false );
+
+global $wpdb;
+$aiscb_social_table = $wpdb->prefix . 'aiscb_social';
+$aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table} WHERE is_deleted = 0" );
 ?>
 
 <div class="wrap">
@@ -25,7 +29,10 @@ $is_active = get_option( 'aiscb_is_active', false );
 
 	<nav class="nav-tab-wrapper">
 		<a href="#keywords-tab" class="nav-tab nav-tab-active" data-tab="keywords-tab">
-			<?php esc_html_e( '关键词设置', 'ai-seo-content-booster' ); ?>
+			<?php esc_html_e( '关键词管理', 'ai-seo-content-booster' ); ?>
+		</a>
+		<a href="#social-tab" class="nav-tab" data-tab="social-tab">
+			<?php esc_html_e( '社媒贴子管理', 'ai-seo-content-booster' ); ?>
 		</a>
 		<a href="#keys-tab" class="nav-tab" data-tab="keys-tab">
 			<?php esc_html_e( '密钥设置', 'ai-seo-content-booster' ); ?>
@@ -85,7 +92,92 @@ $is_active = get_option( 'aiscb_is_active', false );
 		</form>
 	</div>
 
-	<!-- Tab 2: 密钥设置 -->
+	<!-- Tab 2: 社媒贴子管理 (列表为默认视图；点击 添加 显示表单) -->
+	<div id="social-tab" class="tab-content" style="display: none;">
+
+		<!-- Single header for posts tab (shared between list and form) -->
+		<div class="aiscb-posts-header">
+			<div>
+				<a href="#" class="aiscb-posts-all-link" id="aiscb-posts-all"><?php esc_html_e( '全部', 'ai-seo-content-booster' ); ?>（<span class="aiscb-posts-count"><?php echo intval( $aiscb_social_count ); ?></span>）</a>
+				 |  
+				<a href="#" class="aiscb-posts-add-link" id="aiscb-posts-add"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></a>
+			</div>
+			<div style="display:flex; gap:8px; align-items:center;">
+				<input type="search" id="aiscb-posts-search" class="regular-text" placeholder="<?php esc_attr_e( '搜索贴子内容', 'ai-seo-content-booster' ); ?>" />
+				<button type="button" class="button" id="aiscb-posts-search-btn"><?php esc_html_e( '搜索', 'ai-seo-content-booster' ); ?></button>
+			</div>
+		</div>
+
+			<div id="aiscb-posts-wrap">
+			<table class="wp-list-table widefat fixed striped" id="aiscb-posts-table">
+				<thead>
+					<tr>
+						<th style="width:40px;">ID</th>
+						<th><?php esc_html_e( '内容', 'ai-seo-content-booster' ); ?></th>
+						<th style="width:140px;"><?php esc_html_e( '平台', 'ai-seo-content-booster' ); ?></th>
+						<th style="width:120px;"><?php esc_html_e( '附件', 'ai-seo-content-booster' ); ?></th>
+						<th style="width:140px;"><?php esc_html_e( '创建时间', 'ai-seo-content-booster' ); ?></th>
+						<th style="width:120px; text-align:left;"><?php esc_html_e( '操作', 'ai-seo-content-booster' ); ?></th>
+					</tr>
+				</thead>
+				<tbody id="aiscb-posts-tbody">
+					<tr><td colspan="6" style="text-align:center;"><?php esc_html_e( '加载中...', 'ai-seo-content-booster' ); ?></td></tr>
+				</tbody>
+			</table>
+			<div id="aiscb-posts-pagination" style="margin-top:12px;"></div>
+			</div>
+
+		<div id="aiscb-social-form-wrap" style="display:none;">
+			<form method="post" action="#" id="aiscb-social-form">
+				<?php wp_nonce_field( 'aiscb_social_nonce', 'aiscb_social_nonce' ); ?>
+				<table class="form-table" role="presentation">
+					<tbody>
+						<tr>
+							<th scope="row">
+								<label for="aiscb_social_content"><?php esc_html_e( '贴子内容', 'ai-seo-content-booster' ); ?></label>
+							</th>
+							<td>
+								<textarea name="aiscb_social_content" id="aiscb_social_content" rows="6" class="large-text"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label><?php esc_html_e( '贴子附件', 'ai-seo-content-booster' ); ?></label>
+							</th>
+							<td>
+								<div id="aiscb-attachments-list"></div>
+								<p>
+									<button type="button" class="button" id="aiscb-add-attachment-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+								</p>
+								<p class="description">
+									<?php esc_html_e( '可添加多个图片或视频', 'ai-seo-content-booster' ); ?>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label><?php esc_html_e( '选择平台', 'ai-seo-content-booster' ); ?></label>
+							</th>
+							<td>
+								<label><input type="checkbox" name="aiscb_social_platforms[]" value="facebook" /> <?php esc_html_e( 'Facebook', 'ai-seo-content-booster' ); ?></label><br/>
+								<label><input type="checkbox" name="aiscb_social_platforms[]" value="instagram" /> <?php esc_html_e( 'Instagram', 'ai-seo-content-booster' ); ?></label><br/>
+								<label><input type="checkbox" name="aiscb_social_platforms[]" value="youtube" /> <?php esc_html_e( 'YouTube', 'ai-seo-content-booster' ); ?></label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p class="submit">
+					<button type="button" name="submit" id="aiscb-social-save-btn" class="button button-primary">
+						<?php esc_html_e( '保存', 'ai-seo-content-booster' ); ?>
+					</button>
+					<input type="hidden" id="aiscb_social_id" name="aiscb_social_id" value="" />
+				</p>
+			</form>
+		</div>
+	</div>
+
+	<!-- Tab 3: 密钥设置 -->
 	<div id="keys-tab" class="tab-content" style="display: none;">
 		<form method="post" action="options.php" id="aiscb-keys-form">
 			<?php wp_nonce_field( 'aiscb_keys_nonce', 'aiscb_keys_nonce' ); ?>

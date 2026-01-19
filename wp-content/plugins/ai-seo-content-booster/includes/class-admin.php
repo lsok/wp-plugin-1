@@ -26,6 +26,10 @@ class AISCB_Admin
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
 
 		// AJAX handlers
+		add_action('wp_ajax_aiscb_save_social_post', array($this, 'ajax_save_social_post'));
+		add_action('wp_ajax_aiscb_get_social_posts', array($this, 'ajax_get_social_posts'));
+		add_action('wp_ajax_aiscb_delete_social_post', array($this, 'ajax_delete_social_post'));
+		add_action('wp_ajax_aiscb_get_social_count', array($this, 'ajax_get_social_count'));
 		add_action('wp_ajax_aiscb_get_keywords', array($this, 'ajax_get_keywords'));
 		add_action('wp_ajax_aiscb_get_existing_keywords', array($this, 'ajax_get_existing_keywords'));
 		add_action('wp_ajax_aiscb_add_keyword', array($this, 'ajax_add_keyword'));
@@ -61,6 +65,9 @@ class AISCB_Admin
 		if (strpos($hook, 'toplevel_page_ai-seo-content-booster') === false) {
 			return;
 		}
+
+		// Ensure media scripts are available for media picker
+		wp_enqueue_media();
 
 		wp_enqueue_script('aiscb-admin-js', plugin_dir_url(dirname(__FILE__)) . 'admin/assets/js/admin.js', array('jquery', 'wp-i18n'), '1.0.0', true);
 		wp_enqueue_style('aiscb-admin-css', plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/admin.css', array(), '1.0.0');
@@ -101,6 +108,13 @@ class AISCB_Admin
 				'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
 				'confirmDeleteBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
 				'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
+					// Social post strings
+					'saveSocialPending'       => __('正在保存社媒贴子...', 'ai-seo-content-booster'),
+					'saveSocialSuccess'       => __('社媒贴子已保存', 'ai-seo-content-booster'),
+					'saveSocialFailed'        => __('保存社媒贴子失败', 'ai-seo-content-booster'),
+					'chooseMedia'             => __('从媒体库选择', 'ai-seo-content-booster'),
+					'removeAttachment'        => __('移除', 'ai-seo-content-booster'),
+					'noAttachments'           => __('暂无附件', 'ai-seo-content-booster'),
 			),
 		));
 	}
@@ -646,5 +660,191 @@ class AISCB_Admin
 
 		/* translators: %d: 成功删除的关键词数量 */
 		wp_send_json_success(array('message' => sprintf(__('成功删除 %d 个关键词', 'ai-seo-content-booster'), $result)));
+	}
+
+	/**
+	 * AJAX handler: Save social post
+	 */
+	public function ajax_save_social_post()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		$content = isset($_POST['content']) ? wp_kses_post(wp_unslash($_POST['content'])) : '';
+		$attachments_raw = isset($_POST['attachments']) ? wp_unslash($_POST['attachments']) : '[]';
+		$attachments = json_decode($attachments_raw, true);
+		if (! is_array($attachments)) {
+			$attachments = array();
+		}
+
+		$sanitized_attachments = array();
+		foreach ($attachments as $att) {
+			if (is_array($att) && isset($att['id']) && intval($att['id']) > 0) {
+				$id = absint($att['id']);
+				$url = wp_get_attachment_url($id);
+				$mime = get_post_mime_type($id);
+				$type = (strpos((string) $mime, 'image') === 0) ? 'image' : ((strpos((string) $mime, 'video') === 0) ? 'video' : 'file');
+				$sanitized_attachments[] = array('type' => $type, 'id' => $id, 'url' => $url);
+			} elseif (is_array($att) && isset($att['url'])) {
+				$url = esc_url_raw($att['url']);
+				$type = preg_match('/video|\.mp4|\.webm/i', $url) ? 'video' : 'file';
+				$sanitized_attachments[] = array('type' => $type, 'url' => $url);
+			}
+		}
+
+		$platforms = isset($_POST['platforms']) ? array_map('sanitize_text_field', (array) $_POST['platforms']) : array();
+
+		// Validation: content required and at least one platform
+		$plain_content = trim( wp_strip_all_tags( $content ) );
+		if (empty($plain_content)) {
+			wp_send_json_error(array('message' => __('帖子内容不能为空', 'ai-seo-content-booster')));
+		}
+
+		if (empty($platforms) || ! is_array($platforms) || count($platforms) === 0) {
+			wp_send_json_error(array('message' => __('请至少选择一个平台', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_social';
+
+		// Support update if id provided
+		$post_id = isset($_POST['id']) ? absint($_POST['id']) : 0;
+
+		$data = array(
+			'content' => $content,
+			'attachment' => wp_json_encode($sanitized_attachments),
+			'platform' => wp_json_encode($platforms),
+			'status' => 'unpublished',
+			'is_deleted' => 0,
+		);
+
+		$formats = array('%s', '%s', '%s', '%s', '%d');
+
+		if ($post_id > 0) {
+			$result = $wpdb->update(
+				$table_name,
+				$data,
+				array('id' => $post_id),
+				$formats,
+				array('%d')
+			);
+			if ($result === false) {
+				wp_send_json_error(array('message' => __('更新社媒贴子失败', 'ai-seo-content-booster')));
+			}
+			wp_send_json_success(array('message' => __('社媒贴子已更新', 'ai-seo-content-booster')));
+		} else {
+			$result = $wpdb->insert(
+				$table_name,
+				$data,
+				$formats
+			);
+			if ($result === false) {
+				wp_send_json_error(array('message' => __('保存社媒贴子失败', 'ai-seo-content-booster')));
+			}
+			wp_send_json_success(array('message' => __('社媒贴子已保存', 'ai-seo-content-booster')));
+		}
+	}
+
+	/**
+	 * AJAX handler: Get social posts (with pagination and search)
+	 */
+	public function ajax_get_social_posts()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_social';
+
+		$page = isset($_POST['page']) ? absint($_POST['page']) : 1;
+		$per_page = isset($_POST['per_page']) ? absint($_POST['per_page']) : 10;
+		$search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+		$offset = ($page - 1) * $per_page;
+
+		$where = 'WHERE is_deleted = 0';
+		$params = array();
+		if (! empty($search)) {
+			$where .= ' AND content LIKE %s';
+			$params[] = '%' . $wpdb->esc_like($search) . '%';
+		}
+
+		// Count total
+		if (! empty($params)) {
+			$total = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$table_name} {$where}", $params));
+			$posts = $wpdb->get_results($wpdb->prepare("SELECT id, content, attachment, platform, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d", array_merge($params, array($per_page, $offset))));
+		} else {
+			$total = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} {$where}");
+			$posts = $wpdb->get_results($wpdb->prepare("SELECT id, content, attachment, platform, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d", $per_page, $offset));
+		}
+
+		$total_pages = ceil($total / $per_page);
+
+		wp_send_json_success(array(
+			'posts' => $posts,
+			'pagination' => array(
+				'current_page' => $page,
+				'total_pages' => $total_pages,
+				'total_items' => intval($total),
+				'per_page' => $per_page,
+			),
+		));
+	}
+
+	/**
+	 * AJAX handler: Delete social post (soft delete)
+	 */
+	public function ajax_delete_social_post()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		$post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+		if (empty($post_id)) {
+			wp_send_json_error(array('message' => __('参数错误', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_social';
+
+		$result = $wpdb->update(
+			$table_name,
+			array('is_deleted' => 1),
+			array('id' => $post_id),
+			array('%d'),
+			array('%d')
+		);
+
+		if ($result === false) {
+			wp_send_json_error(array('message' => __('删除失败', 'ai-seo-content-booster')));
+		}
+
+		wp_send_json_success(array('message' => __('删除成功', 'ai-seo-content-booster')));
+	}
+
+	/**
+	 * AJAX handler: Get social posts count
+	 */
+	public function ajax_get_social_count()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_social';
+		$count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} WHERE is_deleted = 0");
+
+		wp_send_json_success(array('count' => $count));
 	}
 }

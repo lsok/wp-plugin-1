@@ -25,6 +25,17 @@
 		// Update tab content
 		$('.tab-content').removeClass('active').hide();
 		$('#' + targetTab).addClass('active').show();
+
+		// If social tab activated, show posts list by default
+		if (targetTab === 'social-tab') {
+			$('#aiscb-social-form-wrap').hide();
+			$('#aiscb-posts-wrap').show();
+			postsCurrentPage = 1;
+			postsCurrentSearch = '';
+			$('#aiscb-posts-search').val('');
+			loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+			setPostsHeaderActive('list');
+		}
 	});
 
 	// Get recommended keywords button
@@ -51,6 +62,9 @@
 	var perPage = 10;
 	var currentSearch = '';
 	var keywordsData = [];
+
+// Social attachments state
+var aiscbSocialAttachments = [];
 
 	// Show existing keywords
 	function existingKeywords() {
@@ -611,6 +625,340 @@
 		e.preventDefault();
 		// TODO: Implement AJAX form submission
 		alert(i18n.savePending);
+	});
+
+	// Open media library to add attachments
+	$('#aiscb-add-attachment-btn').on('click', function (e) {
+		e.preventDefault();
+		var frame = wp.media({
+			title: i18n.chooseMedia || 'Choose Media',
+			button: { text: i18n.chooseMedia || 'Choose' },
+			multiple: true,
+			library: { type: ['image', 'video'] }
+		});
+
+		frame.on('select', function () {
+			var selection = frame.state().get('selection');
+			selection.each(function (attachment) {
+				attachment = attachment.toJSON();
+				// Keep id and url
+				aiscbSocialAttachments.push({ id: attachment.id || 0, url: attachment.url || '', mime: attachment.mime || '' });
+			});
+			renderAiscbAttachments();
+		});
+
+		frame.open();
+	});
+
+	// Render attachments list
+	function renderAiscbAttachments() {
+		var $wrap = $('#aiscb-attachments-list');
+		$wrap.empty();
+		if (!aiscbSocialAttachments || aiscbSocialAttachments.length === 0) {
+			$wrap.html('<p>' + (i18n.noAttachments || '暂无附件') + '</p>');
+			return;
+		}
+
+		aiscbSocialAttachments.forEach(function (att, idx) {
+			var $item = $('<div class="aiscb-attachment-item" data-idx="' + idx + '" style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"></div>');
+			// If image show thumbnail
+			if (att.mime && att.mime.indexOf('image') === 0 && att.url) {
+				$item.append('<img src="' + att.url + '" style="max-width:120px; max-height:80px; object-fit:cover;" alt="attachment" />');
+			} else if (att.mime && att.mime.indexOf('video') === 0 && att.url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(att.url) + '</div>');
+			} else if (att.url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(att.url) + '</div>');
+			} else {
+				$item.append('<div>' + escapeHtml(i18n.noAttachments || '暂无附件') + '</div>');
+			}
+
+			$item.append('<button type="button" class="button aiscb-remove-attachment" data-idx="' + idx + '">' + (i18n.removeAttachment || '移除') + '</button>');
+			$wrap.append($item);
+		});
+	}
+
+	// Remove attachment
+	$(document).on('click', '.aiscb-remove-attachment', function () {
+		var idx = $(this).data('idx');
+		if (typeof idx !== 'undefined') {
+			aiscbSocialAttachments.splice(idx, 1);
+			renderAiscbAttachments();
+		}
+	});
+
+	// Save social post via AJAX
+	$('#aiscb-social-save-btn').on('click', function (e) {
+		e.preventDefault();
+		var content = $('#aiscb_social_content').val().trim();
+		var platforms = [];
+		$('input[name="aiscb_social_platforms[]"]:checked').each(function () { platforms.push($(this).val()); });
+		var postId = $('#aiscb_social_id').val() || '';
+
+		// Client-side validation
+		if (!content) {
+			alert('帖子内容不能为空');
+			return;
+		}
+		if (!platforms || platforms.length === 0) {
+			alert('请至少选择一个平台');
+			return;
+		}
+
+		var $btn = $(this);
+		var originalText = $btn.text();
+		$btn.prop('disabled', true).text(i18n.saveSocialPending || '保存中...');
+
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: {
+				action: 'aiscb_save_social_post',
+				nonce: aiscbAdmin.nonce,
+				id: postId,
+				content: content,
+				attachments: JSON.stringify(aiscbSocialAttachments),
+				platforms: platforms
+			},
+			success: function (response) {
+				$btn.prop('disabled', false).text(originalText);
+				if (response.success) {
+					alert(response.data && response.data.message ? response.data.message : (i18n.saveSocialSuccess || '保存成功'));
+					// clear form and id
+					$('#aiscb_social_content').val('');
+					$('input[name="aiscb_social_platforms[]"]').prop('checked', false);
+					aiscbSocialAttachments = [];
+					renderAiscbAttachments();
+					$('#aiscb_social_id').val('');
+					// always switch back to list view and refresh
+					$('#aiscb-social-form-wrap').hide();
+					$('#aiscb-posts-wrap').show();
+					postsCurrentPage = 1;
+					postsCurrentSearch = '';
+					$('#aiscb-posts-search').val('');
+					setPostsHeaderActive('list');
+					loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+					// update header count
+					updateAiscbPostsCount();
+				} else {
+					alert(response.data && response.data.message ? response.data.message : (i18n.saveSocialFailed || '保存失败'));
+				}
+			},
+			error: function (xhr, status, error) {
+				$btn.prop('disabled', false).text(originalText);
+				console.error('AJAX Error:', status, error);
+				alert(i18n.networkError || '网络错误');
+			}
+		});
+	});
+
+	// Posts list state
+	var postsCurrentPage = 1;
+	var postsPerPage = 10;
+	var postsCurrentSearch = '';
+
+	// Show list (全部) and refresh - delegated to support links in both list and form header
+	$(document).on('click', '.aiscb-posts-all-link', function (e) {
+		e.preventDefault();
+		$('#aiscb-social-form-wrap').hide();
+		$('#aiscb-posts-wrap').show();
+		postsCurrentPage = 1;
+		postsCurrentSearch = '';
+		$('#aiscb-posts-search').val('');
+		loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+	});
+
+	// Show add form - delegated
+	$(document).on('click', '.aiscb-posts-add-link', function (e) {
+		e.preventDefault();
+		$('#aiscb-posts-wrap').hide();
+		$('#aiscb-social-form-wrap').show();
+		// clear form
+		$('#aiscb_social_id').val('');
+		$('#aiscb_social_content').val('');
+		$('input[name="aiscb_social_platforms[]"]').prop('checked', false);
+		aiscbSocialAttachments = [];
+		renderAiscbAttachments();
+		setPostsHeaderActive('add');
+	});
+
+	// Toggle header active state
+	function setPostsHeaderActive(mode) {
+		// mode: 'list' or 'add'
+		if (mode === 'list') {
+			$('.aiscb-posts-all-link').addClass('active');
+			$('.aiscb-posts-add-link').removeClass('active');
+		} else if (mode === 'add') {
+			$('.aiscb-posts-add-link').addClass('active');
+			$('.aiscb-posts-all-link').removeClass('active');
+		}
+	}
+
+	// Update posts count element text
+	function updateAiscbPostsCount() {
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: { action: 'aiscb_get_social_count', nonce: aiscbAdmin.nonce },
+			success: function (response) {
+				if (response.success && typeof response.data.count !== 'undefined') {
+					$('.aiscb-posts-count').text(response.data.count);
+				}
+			}
+		});
+	}
+
+	// Search posts
+	$('#aiscb-posts-search-btn').on('click', function () {
+		postsCurrentSearch = $('#aiscb-posts-search').val().trim();
+		postsCurrentPage = 1;
+		loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+	});
+
+	$('#aiscb-posts-search').on('keypress', function (e) {
+		if (e.which === 13) { // enter
+			e.preventDefault();
+			$('#aiscb-posts-search-btn').trigger('click');
+		}
+	});
+
+	function loadAiscbPosts(page, search) {
+		page = page || 1;
+		search = search || '';
+		var $tbody = $('#aiscb-posts-tbody');
+		$tbody.html('<tr><td colspan="6" style="text-align:center;padding:20px;"><span class="spinner is-active" style="float:none;position:relative;top:-3px"></span> 加载中...</td></tr>');
+
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: {
+				action: 'aiscb_get_social_posts',
+				nonce: aiscbAdmin.nonce,
+				page: page,
+				per_page: postsPerPage,
+				search: search
+			},
+			success: function (response) {
+				if (response.success) {
+					var posts = response.data.posts;
+					var pagination = response.data.pagination;
+					renderAiscbPostsTable(posts);
+					renderAiscbPostsPagination(pagination);
+						// update posts count header
+						updateAiscbPostsCount();
+					// ensure header active state
+					setPostsHeaderActive('list');
+				} else {
+					$tbody.html('<tr><td colspan="6" style="text-align:center;color:#d63638;">' + (response.data && response.data.message ? escapeHtml(response.data.message) : '加载失败') + '</td></tr>');
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', status, error);
+				$tbody.html('<tr><td colspan="6" style="text-align:center;color:#d63638;">网络错误</td></tr>');
+			}
+		});
+	}
+
+	function renderAiscbPostsTable(posts) {
+		var $tbody = $('#aiscb-posts-tbody');
+		$tbody.empty();
+		if (!posts || posts.length === 0) {
+			$tbody.append('<tr><td colspan="6" style="text-align:center;">暂无贴子</td></tr>');
+			return;
+		}
+
+		posts.forEach(function (p) {
+			var attachments = [];
+			try { attachments = p.attachment ? JSON.parse(p.attachment) : []; } catch (e) { attachments = []; }
+			var platform = [];
+			try { platform = p.platform ? JSON.parse(p.platform) : []; } catch (e) { platform = []; }
+
+			var content = p.content ? p.content.replace(/<[^>]*>?/gm, '') : '';
+			if (content.length > 120) content = content.substring(0, 120) + '...';
+
+			var $tr = $('<tr>');
+			$tr.append('<td>' + p.id + '</td>');
+			$tr.append('<td>' + escapeHtml(content) + '</td>');
+			$tr.append('<td>' + escapeHtml(platform.join(', ')) + '</td>');
+			$tr.append('<td>' + attachments.length + '</td>');
+			$tr.append('<td>' + (p.created_at || '') + '</td>');
+			var $actions = $('<td>');
+			$actions.append('<button type="button" class="button aiscb-edit-post" data-post="' + encodeURIComponent(JSON.stringify(p)) + '" style="margin-right:6px;">编辑</button>');
+			$actions.append('<button type="button" class="button aiscb-delete-post" data-id="' + p.id + '">删除</button>');
+			$tr.append($actions);
+			$tbody.append($tr);
+		});
+	}
+
+	function renderAiscbPostsPagination(pagination) {
+		var $wrap = $('#aiscb-posts-pagination');
+		$wrap.empty();
+		if (!pagination || pagination.total_pages <= 1) return;
+
+		var html = '<div class="aiscb-pagination-wrapper">';
+		if (pagination.current_page > 1) html += '<button type="button" class="button aiscb-posts-page-btn" data-page="' + (pagination.current_page - 1) + '">上一页</button>';
+		else html += '<button type="button" class="button" disabled>上一页</button>';
+		html += '<span style="margin:0 8px;">第 ' + pagination.current_page + ' 页 / 共 ' + pagination.total_pages + ' 页（共 ' + pagination.total_items + ' 条）</span>';
+		if (pagination.current_page < pagination.total_pages) html += '<button type="button" class="button aiscb-posts-page-btn" data-page="' + (pagination.current_page + 1) + '">下一页</button>';
+		else html += '<button type="button" class="button" disabled>下一页</button>';
+		html += '</div>';
+		$wrap.html(html);
+	}
+
+	// Pagination click
+	$(document).on('click', '.aiscb-posts-page-btn', function () {
+		var page = $(this).data('page');
+		if (page) {
+			postsCurrentPage = page;
+			loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+		}
+	});
+
+	// Delete post
+	$(document).on('click', '.aiscb-delete-post', function () {
+		if (!confirm('确定要删除该贴子吗？')) return;
+		var postId = $(this).data('id');
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: { action: 'aiscb_delete_social_post', nonce: aiscbAdmin.nonce, post_id: postId },
+			success: function (response) {
+				if (response.success) {
+					alert(response.data && response.data.message ? response.data.message : '删除成功');
+					loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+					updateAiscbPostsCount();
+				} else {
+					alert(response.data && response.data.message ? response.data.message : '删除失败');
+				}
+			},
+			error: function () { alert('网络错误'); }
+		});
+	});
+
+	// Edit post -> populate form and switch to social tab
+	$(document).on('click', '.aiscb-edit-post', function () {
+		var raw = $(this).data('post');
+		try {
+			var p = JSON.parse(decodeURIComponent(raw));
+		} catch (e) { console.error(e); return; }
+		// populate form
+		$('#aiscb_social_id').val(p.id);
+		$('#aiscb_social_content').val(p.content || '');
+		// platforms
+		try { var plats = p.platform ? JSON.parse(p.platform) : []; } catch (e) { var plats = []; }
+		$('input[name="aiscb_social_platforms[]"]').prop('checked', false);
+		plats.forEach(function (pl) { $('input[name="aiscb_social_platforms[]"][value="' + pl + '"]').prop('checked', true); });
+		// attachments
+		try { var atts = p.attachment ? JSON.parse(p.attachment) : []; } catch (e) { var atts = []; }
+		aiscbSocialAttachments = atts.map(function (a) { return { id: a.id || 0, url: a.url || '', mime: a.type === 'image' ? 'image/*' : (a.type === 'video' ? 'video/*' : '') }; });
+		renderAiscbAttachments();
+		// switch to social tab and show form for editing
+		$('.nav-tab').removeClass('nav-tab-active');
+		$('.tab-content').removeClass('active').hide();
+		$('.nav-tab[data-tab="social-tab"]').addClass('nav-tab-active');
+		$('#social-tab').addClass('active').show();
+		$('#aiscb-posts-wrap').hide();
+		$('#aiscb-social-form-wrap').show();
+		setPostsHeaderActive('add');
 	});
 
 	// Call existingKeywords on page load to populate the keywords list
