@@ -1024,8 +1024,11 @@ $(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
 			data: {
 				action: 'aiscb_save_keys',
 				nonce: aiscbAdmin.nonce,
-				gemini_key: $('#aiscb_gemini_key').val(),
-				facebook_key: $('#aiscb_facebook_key').val()
+				aiscb_gemini_key: $('#aiscb_gemini_key').val(),
+				aiscb_facebook_key: $('#aiscb_facebook_key').val(),
+				aiscb_instagram_key: $('#aiscb_instagram_key').val(),
+				aiscb_youtube_key: $('#aiscb_youtube_key').val(),
+				aiscb_openrouter_key: $('#aiscb_openrouter_key').val()
 			},
 			success: function(response) {
 				if (response.success) {

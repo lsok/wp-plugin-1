@@ -868,12 +868,18 @@ class AISCB_Admin
 			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
 		}
 
-		$gemini_key = isset($_POST['gemini_key']) ? sanitize_text_field($_POST['gemini_key']) : '';
-		$facebook_key = isset($_POST['facebook_key']) ? sanitize_text_field($_POST['facebook_key']) : '';
+		$gemini_key = isset($_POST['aiscb_gemini_key']) ? sanitize_text_field($_POST['aiscb_gemini_key']) : '';
+		$facebook_key = isset($_POST['aiscb_facebook_key']) ? sanitize_text_field($_POST['aiscb_facebook_key']) : '';
+		$instagram_key = isset($_POST['aiscb_instagram_key']) ? sanitize_text_field($_POST['aiscb_instagram_key']) : '';
+		$youtube_key = isset($_POST['aiscb_youtube_key']) ? sanitize_text_field($_POST['aiscb_youtube_key']) : '';
+		$openrouter_key = isset($_POST['aiscb_openrouter_key']) ? sanitize_text_field($_POST['aiscb_openrouter_key']) : '';
 
 		// Save the keys to WordPress options
 		update_option('aiscb_gemini_key', $gemini_key);
 		update_option('aiscb_facebook_key', $facebook_key);
+		update_option('aiscb_instagram_key', $instagram_key);
+		update_option('aiscb_youtube_key', $youtube_key);
+		update_option('aiscb_openrouter_key', $openrouter_key);
 
 		wp_send_json_success(array('message' => __('密钥已保存', 'ai-seo-content-booster')));
 	}

@@ -14,6 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 $keywords = get_option( 'aiscb_keywords', '' );
 $gemini_key = get_option( 'aiscb_gemini_key', '' );
 $facebook_key = get_option( 'aiscb_facebook_key', '' );
+$instagram_key = get_option( 'aiscb_instagram_key', '' );
+$youtube_key = get_option( 'aiscb_youtube_key', '' );
+$openrouter_key = get_option( 'aiscb_openrouter_key', '' );
 $article_category = get_option( 'aiscb_article_category', '' );
 $publish_frequency = get_option( 'aiscb_publish_frequency', 'daily' );
 $publish_time = get_option( 'aiscb_publish_time', '09:00' );
@@ -212,15 +215,66 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 							<label for="aiscb_facebook_key"><?php esc_html_e( 'Facebook API Key', 'ai-seo-content-booster' ); ?></label>
 						</th>
 						<td>
-							<input 
-								type="password" 
-								name="aiscb_facebook_key" 
-								id="aiscb_facebook_key" 
-								value="<?php echo esc_attr( $facebook_key ); ?>" 
+							<input
+								type="password"
+								name="aiscb_facebook_key"
+								id="aiscb_facebook_key"
+								value="<?php echo esc_attr( $facebook_key ); ?>"
 								class="regular-text"
 							/>
 							<p class="description">
 								<?php esc_html_e( '输入您的 Facebook API 密钥', 'ai-seo-content-booster' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="aiscb_instagram_key"><?php esc_html_e( 'Instagram API Key', 'ai-seo-content-booster' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="password"
+								name="aiscb_instagram_key"
+								id="aiscb_instagram_key"
+								value="<?php echo esc_attr( $instagram_key ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">
+								<?php esc_html_e( '输入您的 Instagram API 密钥', 'ai-seo-content-booster' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="aiscb_youtube_key"><?php esc_html_e( 'YouTube API Key', 'ai-seo-content-booster' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="password"
+								name="aiscb_youtube_key"
+								id="aiscb_youtube_key"
+								value="<?php echo esc_attr( $youtube_key ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">
+								<?php esc_html_e( '输入您的 YouTube API 密钥', 'ai-seo-content-booster' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="aiscb_openrouter_key"><?php esc_html_e( 'OpenRouter API Key', 'ai-seo-content-booster' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="password"
+								name="aiscb_openrouter_key"
+								id="aiscb_openrouter_key"
+								value="<?php echo esc_attr( $openrouter_key ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">
+								<?php esc_html_e( '输入您的 OpenRouter API 密钥', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
 					</tr>
