@@ -598,7 +598,7 @@ var aiscbSocialAttachments = [];
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
-			type: 'POST',
+		 type: 'POST',
 			data: {
 				action: 'aiscb_bulk_delete_keywords',
 				nonce: aiscbAdmin.nonce,
@@ -621,7 +621,7 @@ var aiscbSocialAttachments = [];
 	});
 
 	// Form submissions (prevent default for now, backend will be implemented later)
-	$('#aiscb-keywords-form, #aiscb-keys-form, #aiscb-article-form').on('submit', function (e) {
+	$('#aiscb-keywords-form, #aiscb-article-form').on('submit', function (e) {
 		e.preventDefault();
 		// TODO: Implement AJAX form submission
 		alert(i18n.savePending);
@@ -1006,6 +1006,41 @@ $(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
 	// Call existingKeywords on page load to populate the keywords list
 	$(function () {
 		existingKeywords();
+	});
+
+	// Handle keys form submission
+	$('#aiscb-keys-form').on('submit', function(e) {
+		e.preventDefault();
+		
+		var $form = $(this);
+		var $submitBtn = $form.find('button[type="submit"]');
+		var originalText = $submitBtn.text();
+		
+		$submitBtn.prop('disabled', true).text(i18n.saving);
+		
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: {
+				action: 'aiscb_save_keys',
+				nonce: aiscbAdmin.nonce,
+				gemini_key: $('#aiscb_gemini_key').val(),
+				facebook_key: $('#aiscb_facebook_key').val()
+			},
+			success: function(response) {
+				if (response.success) {
+					alert(response.data.message);
+				} else {
+					alert(response.data.message);
+				}
+			},
+			error: function(xhr, status, error) {
+				alert(i18n.networkError + error);
+			},
+			complete: function() {
+				$submitBtn.prop('disabled', false).text(originalText);
+			}
+		});
 	});
 
 })(jQuery);

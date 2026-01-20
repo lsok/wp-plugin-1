@@ -39,6 +39,8 @@ class AISCB_Admin
 		add_action('wp_ajax_aiscb_edit_keyword', array($this, 'ajax_edit_keyword'));
 		add_action('wp_ajax_aiscb_delete_keyword', array($this, 'ajax_delete_keyword'));
 		add_action('wp_ajax_aiscb_bulk_delete_keywords', array($this, 'ajax_bulk_delete_keywords'));
+		add_action('wp_ajax_aiscb_save_keys', array($this, 'ajax_save_keys'));
+
 	}
 
 	/**
@@ -853,5 +855,26 @@ class AISCB_Admin
 		$count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} WHERE is_deleted = 0");
 
 		wp_send_json_success(array('count' => $count));
+	}
+
+	/**
+	 * AJAX handler: Save API keys
+	 */
+	public function ajax_save_keys()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		$gemini_key = isset($_POST['gemini_key']) ? sanitize_text_field($_POST['gemini_key']) : '';
+		$facebook_key = isset($_POST['facebook_key']) ? sanitize_text_field($_POST['facebook_key']) : '';
+
+		// Save the keys to WordPress options
+		update_option('aiscb_gemini_key', $gemini_key);
+		update_option('aiscb_facebook_key', $facebook_key);
+
+		wp_send_json_success(array('message' => __('密钥已保存', 'ai-seo-content-booster')));
 	}
 }
