@@ -491,7 +491,6 @@ class AISCB_Admin
 
 		$keyword_id = isset($_POST['keyword_id']) ? absint($_POST['keyword_id']) : 0;
 		$keyword = isset($_POST['keyword']) ? sanitize_text_field(trim($_POST['keyword'])) : '';
-		$attachments = isset($_POST['attachments']) ? sanitize_text_field($_POST['attachments']) : '';
 
 		if (empty($keyword_id) || empty($keyword)) {
 			wp_send_json_error(array('message' => __('参数错误', 'ai-seo-content-booster')));
@@ -511,21 +510,11 @@ class AISCB_Admin
 			wp_send_json_error(array('message' => __('该关键词已存在', 'ai-seo-content-booster')));
 		}
 
-		// Prepare data for update
-		$update_data = array('keyword' => $keyword);
-		$update_format = array('%s');
-		
-		// Add attachments if provided
-		if (!empty($attachments)) {
-			$update_data['attachment'] = $attachments;
-			$update_format[] = '%s';
-		}
-
 		$result = $wpdb->update(
 			$table_name,
-			$update_data,
+			array('keyword' => $keyword),
 			array('id' => $keyword_id),
-			$update_format,
+			array('%s'),
 			array('%d')
 		);
 
@@ -564,7 +553,7 @@ class AISCB_Admin
 		$total = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} {$where}");
 
 		$keywords = $wpdb->get_results($wpdb->prepare(
-			"SELECT id, keyword, attachment, status, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+			"SELECT id, keyword, status, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d",
 			$per_page,
 			$offset
 		));
@@ -597,7 +586,7 @@ class AISCB_Admin
 		$table_name = $wpdb->prefix . 'aiscb_keywords';
 
 		$keywords = $wpdb->get_results(
-			"SELECT id, keyword, attachment FROM {$table_name} WHERE is_deleted = 0 ORDER BY created_at DESC LIMIT 15"
+			"SELECT id, keyword FROM {$table_name} WHERE is_deleted = 0 ORDER BY created_at DESC LIMIT 15"
 		);
 
 		wp_send_json_success(array(

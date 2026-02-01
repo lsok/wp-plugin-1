@@ -63,16 +63,13 @@
 	var currentSearch = '';
 	var keywordsData = [];
 
-	// Keyword attachments state
-	var aiscbKeywordAttachments = [];
-
-	// Social attachments state
-	var aiscbSocialAttachments = [];
+// Social attachments state
+var aiscbSocialAttachments = [];
 
 	// Show existing keywords
 	function existingKeywords() {
 		var $existingKeywords = $('#existing-keywords');
-		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster'));
+		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__('加载中…', 'ai-seo-content-booster'));
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -112,7 +109,7 @@
 		search = search || '';
 
 		var $tbody = $('#aiscb-keywords-tbody');
-		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster') + '</td></tr>');
+		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__('加载中…', 'ai-seo-content-booster') + '</td></tr>');
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -152,14 +149,11 @@
 		$tbody.empty();
 
 		if (keywordsData.length === 0) {
-			$tbody.append('<tr><td colspan="5" style="text-align: center; padding: 20px;">' + escapeHtml(i18n.noKeywords) + '</td></tr>');
+			$tbody.append('<tr><td colspan="4" style="text-align: center; padding: 20px;">' + escapeHtml(i18n.noKeywords) + '</td></tr>');
 			return;
 		}
 
 		keywordsData.forEach(function (keyword) {
-			// 添加console.log(keyword)
-			console.log(keyword);
-
 			var $row = $('<tr data-keyword-id="' + keyword.id + '">');
 
 			// Checkbox
@@ -167,20 +161,6 @@
 
 			// Keyword
 			$row.append('<td>' + escapeHtml(keyword.keyword) + '</td>');
-
-			// Attachments count
-			var attachmentsCount = 0;
-			if (keyword.attachment) {
-				try {
-					var attachments = JSON.parse(keyword.attachment);
-					if (Array.isArray(attachments)) {
-						attachmentsCount = attachments.length;
-					}
-				} catch (e) {
-					// If parsing fails, attachmentsCount remains 0
-				}
-			}
-			$row.append('<td>' + attachmentsCount + '</td>');
 
 			// Status
 			var statusText = keyword.status === 'processed' ? i18n.processed : i18n.unprocessed;
@@ -289,11 +269,9 @@
 	// Add keyword button
 	$('#aiscb-add-keyword-btn').on('click', function () {
 		$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
-		$('#aiscb-keyword-input-single').val('').removeData('keyword-id').hide();
 		$('#aiscb-keyword-input').val('').show();
+		$('#aiscb-keyword-input-single').hide().removeData('keyword-id');
 		$('#aiscb-keyword-description').show();
-		// Hide attachments row for adding
-		$('#aiscb-keyword-attachments-row').hide();
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -419,29 +397,6 @@
 		$('#aiscb-keyword-input-single').val(keyword).data('keyword-id', keywordId).show();
 		$('#aiscb-keyword-input').hide();
 		$('#aiscb-keyword-description').hide();
-		// Show attachments row for editing
-		$('#aiscb-keyword-attachments-row').show();
-		// Clear and initialize attachments for this keyword
-		aiscbKeywordAttachments = [];
-		
-		// Find the keyword data in keywordsData array
-		var keywordData = keywordsData.find(function(k) { return k.id == keywordId; });
-		if (keywordData && keywordData.attachment) {
-			try {
-				// 添加对attachment字段为空的判断
-				var attachments = keywordData.attachment ? JSON.parse(keywordData.attachment) : [];
-				if (Array.isArray(attachments)) {
-					aiscbKeywordAttachments = attachments;
-				}
-			} catch (e) {
-				// If parsing fails, aiscbKeywordAttachments remains empty
-			}
-			} catch (e) {
-				// If parsing fails, aiscbKeywordAttachments remains empty
-			}
-		}
-		
-		renderAiscbKeywordAttachments();
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -493,8 +448,7 @@
 				action: 'aiscb_edit_keyword',
 				nonce: aiscbAdmin.nonce,
 				keyword: keywordInput,
-				keyword_id: keywordId,
-				attachments: JSON.stringify(aiscbKeywordAttachments)
+				keyword_id: keywordId
 			};
 
 			console.log('Editing keyword:', data);
@@ -772,107 +726,6 @@ $(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
 			aiscbSocialAttachments.splice(idx, 1);
 			renderAiscbAttachments();
 		}
-	});
-
-	// Render keyword attachments list
-	function renderAiscbKeywordAttachments() {
-		var $wrap = $('#aiscb-keyword-attachments-list');
-		$wrap.empty();
-		if (!aiscbKeywordAttachments || aiscbKeywordAttachments.length === 0) {
-			$wrap.html('<p>' + (i18n.noAttachments || '暂无附件') + '</p>');
-			return;
-		}
-
-		aiscbKeywordAttachments.forEach(function (att, idx) {
-			var $item = $('<div class="aiscb-attachment-item" data-idx="' + idx + '" style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"></div>');
-
-			var url = att.url || '';
-			var isImage = (att.mime && att.mime.indexOf('image') === 0) || /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i.test(url);
-			var isVideo = (att.mime && att.mime.indexOf('video') === 0) || /video|\.mp4|\.webm|\.ogg|\.mov|\.avi/i.test(url);
-
-			if (isImage && url) {
-				$item.append('<img src="' + url + '" style="max-width:120px; max-height:80px; object-fit:cover;" alt="attachment" />');
-			} else if (isVideo && url) {
-				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
-			} else if (url) {
-				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
-			} else {
-				$item.append('<div>' + escapeHtml(i18n.noAttachments || '暂无附件') + '</div>');
-			}
-
-			$item.append('<button type="button" class="button aiscb-keyword-remove-attachment" data-idx="' + idx + '">' + (i18n.removeAttachment || '移除') + '</button>');
-			$wrap.append($item);
-		});
-	}
-
-	// Remove keyword attachment
-	$(document).on('click', '.aiscb-keyword-remove-attachment', function () {
-		var idx = $(this).data('idx');
-		if (typeof idx !== 'undefined') {
-			aiscbKeywordAttachments.splice(idx, 1);
-			renderAiscbKeywordAttachments();
-		}
-	});
-
-	// Open media library to add keyword attachments
-	$('#aiscb-keyword-add-attachment-btn').on('click', function (e) {
-		e.preventDefault();
-		var frame = wp.media({
-			title: i18n.chooseMedia || 'Choose Media',
-			button: { text: i18n.chooseMedia || 'Choose' },
-			multiple: true,
-			library: { type: ['image', 'video'] }
-		});
-
-		frame.on('select', function () {
-			var selection = frame.state().get('selection');
-			selection.each(function (attachment) {
-				attachment = attachment.toJSON();
-				// Keep id and url
-				aiscbKeywordAttachments.push({ id: attachment.id || 0, url: attachment.url || '', mime: attachment.mime || '' });
-			});
-			renderAiscbKeywordAttachments();
-		});
-
-		frame.open();
-	});
-
-	// Manual URL input for keyword attachments: show/hide and add/cancel handlers
-	$(document).on('click', '#aiscb-keyword-add-attachment-url-link', function (e) {
-		e.preventDefault();
-		var $wrap = $('#aiscb-keyword-add-attachment-url-wrap');
-		$wrap.toggle();
-		if ($wrap.is(':visible')) { $('#aiscb-keyword-attachment-url-input').focus(); }
-	});
-
-	// Cancel manual URL input for keyword attachments
-	$(document).on('click', '#aiscb-keyword-attachment-url-cancel-btn', function (e) {
-		e.preventDefault();
-		$('#aiscb-keyword-attachment-url-input').val('');
-		$('#aiscb-keyword-add-attachment-url-wrap').hide();
-	});
-
-	// Add manual URL as keyword attachment
-	$(document).on('click', '#aiscb-keyword-attachment-url-add-btn', function (e) {
-		e.preventDefault();
-		var url = ($('#aiscb-keyword-attachment-url-input').val() || '').trim();
-		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
-
-		// Basic URL validation
-		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
-
-		// Guess mime by extension
-		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
-		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
-		var mime = '';
-		if (imgExt.test(url)) { mime = 'image/*'; }
-		else if (vidExt.test(url)) { mime = 'video/*'; }
-
-		aiscbKeywordAttachments.push({ id: 0, url: url, mime: mime });
-		renderAiscbKeywordAttachments();
-		// hide and clear input
-		$('#aiscb-keyword-attachment-url-input').val('');
-		$('#aiscb-keyword-add-attachment-url-wrap').hide();
 	});
 
 	// Save social post via AJAX
