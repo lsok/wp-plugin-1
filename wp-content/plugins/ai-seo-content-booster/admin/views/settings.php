@@ -425,10 +425,13 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 						<th class="check-column" style="width: 15px;">
 							<input type="checkbox" id="aiscb-select-all-keywords" />
 						</th>
-						<th class="column-keyword" style="width: 45%;">
+						<th class="column-keyword" style="width: 40%;">
 							<span class="keyword-header"><?php esc_html_e( '关键词', 'ai-seo-content-booster' ); ?></span>
 						</th>
-						<th class="column-status" style="width: 25%;">
+						<th class="column-attachments" style="width: 15%;">
+							<span class="attachments-header"><?php esc_html_e( '附件', 'ai-seo-content-booster' ); ?></span>
+						</th>
+						<th class="column-status" style="width: 15%;">
 							<span class="status-header"><?php esc_html_e( '状态', 'ai-seo-content-booster' ); ?></span>
 						</th>
 						<th class="column-actions" style="width: 15%;text-align: left;">
@@ -483,6 +486,26 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 							></textarea>
 							<p class="description" id="aiscb-keyword-description">
 								<?php esc_html_e( '每行输入一个关键词，或从其他文档复制粘贴多个关键词。', 'ai-seo-content-booster' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr id="aiscb-keyword-attachments-row" style="display: none;">
+						<th scope="row">
+							<label><?php esc_html_e( '关键词附件', 'ai-seo-content-booster' ); ?></label>
+						</th>
+						<td>
+							<div id="aiscb-keyword-attachments-list"></div>
+							<p>
+								<button type="button" class="button" id="aiscb-keyword-add-attachment-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+								<a href="#" id="aiscb-keyword-add-attachment-url-link" style="margin-left:10px;"><?php esc_html_e( '手工输入附件url', 'ai-seo-content-booster' ); ?></a>
+								<div id="aiscb-keyword-add-attachment-url-wrap" style="display:none; margin-top:10px;">
+									<input type="text" id="aiscb-keyword-attachment-url-input" class="regular-text" placeholder="https://example.com/image.jpg" style="width:60%;" />
+									<button type="button" class="button" id="aiscb-keyword-attachment-url-add-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+									<button type="button" class="button" id="aiscb-keyword-attachment-url-cancel-btn"><?php esc_html_e( '取消', 'ai-seo-content-booster' ); ?></button>
+								</div>
+							</p>
+							<p class="description">
+								<?php esc_html_e( '可添加多个图片或视频', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
 					</tr>
