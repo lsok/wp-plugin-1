@@ -2,10 +2,10 @@
 
 /**
  * Plugin Name:     AI SEO Content Booster
- * Plugin URI:      PLUGIN SITE HERE
- * Description:     PLUGIN DESCRIPTION HERE
- * Author:          YOUR NAME HERE
- * Author URI:      YOUR SITE HERE
+ * Plugin URI:      https://www.lsok.net
+ * Description:     AI自动内容生成器
+ * Author:          LSOK.NET
+ * Author URI:      https://www.lsok.net
  * Text Domain:     ai-seo-content-booster
  * Domain Path:     /languages
  * Version:    0.1.0
@@ -42,7 +42,7 @@ function AISCB_create_tables()
 	// Keywords table: wp_aiscb_keywords
 	// id          BIGINT(20) UNSIGNED, primary key, auto increment
 	// keyword     VARCHAR(255), keyword text
-	// attachment  TEXT, related attachments in JSON format
+	// attachment  TEXT, attachment data
 	// status      VARCHAR(20), status: unprocessed/processed
 	// is_deleted  TINYINT(1) UNSIGNED, soft delete flag: 0 = not deleted, 1 = deleted
 	// created_at  DATETIME, record created time
@@ -69,8 +69,8 @@ function AISCB_create_tables()
 	// post_id      BIGINT(20) UNSIGNED, related WordPress post ID
 	// title        VARCHAR(255), article title
 	// title_hash   BIGINT(20), article title hash value
-	// content      LONGTEXT, article content
-	// content_hash BIGINT(20), article content hash value
+	// content      TEXT, article content
+	// content_hash LONGTEXT, article content hash value
 	// keyword      VARCHAR(255), keyword used to generate the article
 	// status       VARCHAR(20), status: unpublished/published
 	// created_at   DATETIME, record created time
@@ -81,8 +81,8 @@ function AISCB_create_tables()
 		post_id BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
 		title VARCHAR(255) NOT NULL,
 		title_hash BIGINT(20) NOT NULL,
-		content LONGTEXT NOT NULL,
-		content_hash BIGINT(20) NOT NULL,
+		content TEXT NOT NULL,
+		content_hash LONGTEXT NOT NULL,
 		keyword VARCHAR(255) NOT NULL,
 		status VARCHAR(20) NOT NULL DEFAULT 'unpublished',
 		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
