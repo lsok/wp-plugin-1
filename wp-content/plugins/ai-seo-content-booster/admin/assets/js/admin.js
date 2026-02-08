@@ -66,10 +66,13 @@
 // Social attachments state
 var aiscbSocialAttachments = [];
 
+// Keyword attachments state
+var aiscbKeywordAttachments = [];
+
 	// Show existing keywords
 	function existingKeywords() {
 		var $existingKeywords = $('#existing-keywords');
-		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster'));
+		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__('加载中…', 'ai-seo-content-booster'));
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -109,7 +112,7 @@ var aiscbSocialAttachments = [];
 		search = search || '';
 
 		var $tbody = $('#aiscb-keywords-tbody');
-		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__(i18n.loading, 'ai-seo-content-booster') + '</td></tr>');
+		$tbody.html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__('加载中…', 'ai-seo-content-booster') + '</td></tr>');
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -254,6 +257,8 @@ var aiscbSocialAttachments = [];
 		$('#aiscb-keyword-input').val('').removeData('keyword-id');
 		$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
 		$('#aiscb-select-all-keywords').prop('checked', false);
+		$('#aiscb-keyword-attachment-row').hide();
+		aiscbKeywordAttachments = [];
 	});
 
 	// Close modal when clicking outside
@@ -263,6 +268,8 @@ var aiscbSocialAttachments = [];
 			$('#aiscb-keyword-input').val('').removeData('keyword-id');
 			$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
 			$('#aiscb-select-all-keywords').prop('checked', false);
+			$('#aiscb-keyword-attachment-row').hide();
+			aiscbKeywordAttachments = [];
 		}
 	});
 
@@ -272,6 +279,8 @@ var aiscbSocialAttachments = [];
 		$('#aiscb-keyword-input').val('').show();
 		$('#aiscb-keyword-input-single').hide().removeData('keyword-id');
 		$('#aiscb-keyword-description').show();
+		$('#aiscb-keyword-attachment-row').hide();
+		aiscbKeywordAttachments = [];
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -393,10 +402,43 @@ var aiscbSocialAttachments = [];
 	$(document).on('click', '.aiscb-edit-keyword', function () {
 		var keywordId = $(this).data('keyword-id');
 		var keyword = $(this).data('keyword');
+		
+		// Show loading state
 		$('#aiscb-keyword-edit-title').text(i18n.editKeyword);
 		$('#aiscb-keyword-input-single').val(keyword).data('keyword-id', keywordId).show();
 		$('#aiscb-keyword-input').hide();
 		$('#aiscb-keyword-description').hide();
+		
+		// Show attachment row for editing
+		$('#aiscb-keyword-attachment-row').show();
+		
+		// Clear previous attachments
+		aiscbKeywordAttachments = [];
+		renderAiscbKeywordAttachments();
+		
+		// Get attachments for this keyword
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: {
+				action: 'aiscb_get_keyword_attachments',
+				nonce: aiscbAdmin.nonce,
+				keyword_id: keywordId
+			},
+			success: function (response) {
+				if (response.success) {
+					// Set attachments
+					aiscbKeywordAttachments = response.data.attachments || [];
+					renderAiscbKeywordAttachments();
+				} else {
+					console.error('Failed to load attachments:', response.data.message);
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', status, error);
+			}
+		});
+		
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -448,10 +490,9 @@ var aiscbSocialAttachments = [];
 				action: 'aiscb_edit_keyword',
 				nonce: aiscbAdmin.nonce,
 				keyword: keywordInput,
-				keyword_id: keywordId
+				keyword_id: keywordId,
+				attachments: JSON.stringify(aiscbKeywordAttachments)
 			};
-
-			console.log('Editing keyword:', data);
 
 			// Show loading state
 			var $btn = $(this);
@@ -471,6 +512,7 @@ var aiscbSocialAttachments = [];
 						$('#aiscb-keyword-input').val('').show();
 						$('#aiscb-keyword-input-single').val('').hide().removeData('keyword-id');
 						$('#aiscb-keyword-description').show();
+						$('#aiscb-keyword-attachment-row').hide();
 						$('#aiscb-keyword-edit-title').text(i18n.addKeyword);
 						loadKeywords(currentPage, currentSearch);
 						existingKeywords(); // Refresh existing keywords list
@@ -495,8 +537,6 @@ var aiscbSocialAttachments = [];
 				alert(i18n.enterKeyword);
 				return;
 			}
-
-			console.log('Adding keywords:', keywords);
 
 			// Show loading state
 			var $btn = $(this);
@@ -627,8 +667,31 @@ var aiscbSocialAttachments = [];
 		alert(i18n.savePending);
 	});
 
-	// Open media library to add attachments
-	$('#aiscb-add-attachment-btn').on('click', function (e) {
+	// Open media library to add attachments for keywords
+	$('#aiscb-keyword-edit-modal #aiscb-add-attachment-btn').on('click', function (e) {
+		e.preventDefault();
+		var frame = wp.media({
+			title: i18n.chooseMedia || 'Choose Media',
+			button: { text: i18n.chooseMedia || 'Choose' },
+			multiple: true,
+			library: { type: ['image', 'video'] }
+		});
+
+		frame.on('select', function () {
+			var selection = frame.state().get('selection');
+			selection.each(function (attachment) {
+				attachment = attachment.toJSON();
+				// Keep id and url
+				aiscbKeywordAttachments.push({ id: attachment.id || 0, url: attachment.url || '', mime: attachment.mime || '' });
+			});
+			renderAiscbKeywordAttachments();
+		});
+
+		frame.open();
+	});
+
+// Open media library to add attachments for social posts
+	$('#aiscb-social-form #aiscb-add-attachment-btn').on('click', function (e) {
 		e.preventDefault();
 		var frame = wp.media({
 			title: i18n.chooseMedia || 'Choose Media',
@@ -650,25 +713,63 @@ var aiscbSocialAttachments = [];
 		frame.open();
 	});
 
-// Manual URL input for attachments: show/hide and add/cancel handlers
-$(document).on('click', '#aiscb-add-attachment-url-link', function (e) {
+// Manual URL input for attachments: show/hide and add/cancel handlers for keywords
+$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-add-attachment-url-link', function (e) {
 		e.preventDefault();
-		var $wrap = $('#aiscb-add-attachment-url-wrap');
+		var $wrap = $('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap');
 		$wrap.toggle();
-		if ($wrap.is(':visible')) { $('#aiscb-attachment-url-input').focus(); }
+		if ($wrap.is(':visible')) { $('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').focus(); }
 });
 
-// Cancel manual URL input
-$(document).on('click', '#aiscb-attachment-url-cancel-btn', function (e) {
+// Manual URL input for attachments: show/hide and add/cancel handlers for social posts
+$(document).on('click', '#aiscb-social-form #aiscb-add-attachment-url-link', function (e) {
 		e.preventDefault();
- 		$('#aiscb-attachment-url-input').val('');
- 		$('#aiscb-add-attachment-url-wrap').hide();
+		var $wrap = $('#aiscb-social-form #aiscb-add-attachment-url-wrap');
+		$wrap.toggle();
+		if ($wrap.is(':visible')) { $('#aiscb-social-form #aiscb-attachment-url-input').focus(); }
 });
 
-// Add manual URL as attachment
-$(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
+// Cancel manual URL input for keywords
+$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-cancel-btn', function (e) {
 		e.preventDefault();
- 		var url = ($('#aiscb-attachment-url-input').val() || '').trim();
+ 		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
+ 		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
+});
+
+// Cancel manual URL input for social posts
+$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-cancel-btn', function (e) {
+		e.preventDefault();
+ 		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
+ 		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
+});
+
+// Add manual URL as attachment for keywords
+$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-add-btn', function (e) {
+		e.preventDefault();
+ 		var url = ($('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val() || '').trim();
+ 		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
+
+ 		// Basic URL validation
+ 		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
+
+ 		// Guess mime by extension
+ 		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
+ 		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
+ 		var mime = '';
+ 		if (imgExt.test(url)) { mime = 'image/*'; }
+ 		else if (vidExt.test(url)) { mime = 'video/*'; }
+
+ 		aiscbKeywordAttachments.push({ id: 0, url: url, mime: mime });
+ 		renderAiscbKeywordAttachments();
+ 		// hide and clear input
+ 		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
+ 		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
+});
+
+// Add manual URL as attachment for social posts
+$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', function (e) {
+		e.preventDefault();
+ 		var url = ($('#aiscb-social-form #aiscb-attachment-url-input').val() || '').trim();
  		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
 
  		// Basic URL validation
@@ -684,13 +785,44 @@ $(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
  		aiscbSocialAttachments.push({ id: 0, url: url, mime: mime });
  		renderAiscbAttachments();
  		// hide and clear input
- 		$('#aiscb-attachment-url-input').val('');
- 		$('#aiscb-add-attachment-url-wrap').hide();
+ 		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
+ 		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
 });
 
-	// Render attachments list
+	// Render attachments list for keywords
+	function renderAiscbKeywordAttachments() {
+		var $wrap = $('#aiscb-keyword-edit-modal #aiscb-attachments-list');
+		$wrap.empty();
+		if (!aiscbKeywordAttachments || aiscbKeywordAttachments.length === 0) {
+			$wrap.html('<p>' + (i18n.noAttachments || '暂无附件') + '</p>');
+			return;
+		}
+
+		aiscbKeywordAttachments.forEach(function (att, idx) {
+			var $item = $('<div class="aiscb-attachment-item" data-idx="' + idx + '" style="margin-bottom:10px; display:flex; align-items:center; gap:10px;"></div>');
+
+			var url = att.url || '';
+			var isImage = (att.mime && att.mime.indexOf('image') === 0) || /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i.test(url);
+			var isVideo = (att.mime && att.mime.indexOf('video') === 0) || /video|\.mp4|\.webm|\.ogg|\.mov|\.avi/i.test(url);
+
+			if (isImage && url) {
+				$item.append('<img src="' + url + '" style="max-width:120px; max-height:80px; object-fit:cover;" alt="attachment" />');
+			} else if (isVideo && url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
+			} else if (url) {
+				$item.append('<div style="word-break:break-all;">' + escapeHtml(url) + '</div>');
+			} else {
+				$item.append('<div>' + escapeHtml(i18n.noAttachments || '暂无附件') + '</div>');
+			}
+
+			$item.append('<button type="button" class="button aiscb-remove-keyword-attachment" data-idx="' + idx + '">' + (i18n.removeAttachment || '移除') + '</button>');
+			$wrap.append($item);
+		});
+	}
+
+	// Render attachments list for social posts
 	function renderAiscbAttachments() {
-		var $wrap = $('#aiscb-attachments-list');
+		var $wrap = $('#aiscb-social-form #aiscb-attachments-list');
 		$wrap.empty();
 		if (!aiscbSocialAttachments || aiscbSocialAttachments.length === 0) {
 			$wrap.html('<p>' + (i18n.noAttachments || '暂无附件') + '</p>');
@@ -725,6 +857,15 @@ $(document).on('click', '#aiscb-attachment-url-add-btn', function (e) {
 		if (typeof idx !== 'undefined') {
 			aiscbSocialAttachments.splice(idx, 1);
 			renderAiscbAttachments();
+		}
+	});
+
+	// Remove keyword attachment
+	$(document).on('click', '#aiscb-keyword-edit-modal .aiscb-remove-keyword-attachment', function () {
+		var idx = $(this).data('idx');
+		if (typeof idx !== 'undefined' && aiscbKeywordAttachments && Array.isArray(aiscbKeywordAttachments)) {
+			aiscbKeywordAttachments.splice(idx, 1);
+			renderAiscbKeywordAttachments();
 		}
 	});
 

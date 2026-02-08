@@ -2,10 +2,10 @@
 
 /**
  * Plugin Name:     AI SEO Content Booster
- * Plugin URI:      PLUGIN SITE HERE
- * Description:     PLUGIN DESCRIPTION HERE
- * Author:          YOUR NAME HERE
- * Author URI:      YOUR SITE HERE
+ * Plugin URI:      https://www.lsok.net
+ * Description:     AI自动内容生成器
+ * Author:          LSOK.NET
+ * Author URI:      https://www.lsok.net
  * Text Domain:     ai-seo-content-booster
  * Domain Path:     /languages
  * Version:    0.1.0
@@ -42,6 +42,7 @@ function AISCB_create_tables()
 	// Keywords table: wp_aiscb_keywords
 	// id          BIGINT(20) UNSIGNED, primary key, auto increment
 	// keyword     VARCHAR(255), keyword text
+	// attachment  TEXT, attachment data
 	// status      VARCHAR(20), status: unprocessed/processed
 	// is_deleted  TINYINT(1) UNSIGNED, soft delete flag: 0 = not deleted, 1 = deleted
 	// created_at  DATETIME, record created time
@@ -50,6 +51,7 @@ function AISCB_create_tables()
 	$sql_keywords = "CREATE TABLE $table_keywords (
 		id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 		keyword VARCHAR(255) NOT NULL,
+		attachment TEXT NOT NULL,
 		status VARCHAR(20) NOT NULL DEFAULT 'unprocessed',
 		is_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

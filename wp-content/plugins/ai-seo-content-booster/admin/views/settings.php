@@ -37,12 +37,12 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 		<a href="#social-tab" class="nav-tab" data-tab="social-tab">
 			<?php esc_html_e( '社媒贴子管理', 'ai-seo-content-booster' ); ?>
 		</a>
-		<a href="#keys-tab" class="nav-tab" data-tab="keys-tab">
+		<!-- <a href="#keys-tab" class="nav-tab" data-tab="keys-tab">
 			<?php esc_html_e( '密钥设置', 'ai-seo-content-booster' ); ?>
-		</a>
-		<a href="#article-tab" class="nav-tab" data-tab="article-tab">
+		</a> -->
+		<!-- <a href="#article-tab" class="nav-tab" data-tab="article-tab">
 			<?php esc_html_e( '文章发布设置', 'ai-seo-content-booster' ); ?>
-		</a>
+		</a> -->
 	</nav>
 
 	<!-- Tab 1: 关键词设置 -->
@@ -52,7 +52,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 			
 			<table class="form-table" role="presentation">
 				<tbody>
-					<tr>
+					<!-- <tr>
 						<th scope="row">
 							<label for="aiscb_recommended_keywords"><?php esc_html_e( '推荐关键词', 'ai-seo-content-booster' ); ?></label>
 						</th>
@@ -67,7 +67,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 								<?php esc_html_e( '根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
-					</tr>
+					</tr> -->
 					<tr>
 						<th scope="row">
 							<label for="aiscb_keywords_list"><?php esc_html_e( '关键词列表', 'ai-seo-content-booster' ); ?></label>
@@ -80,18 +80,18 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 						<th scope="row"></th>
 						<td>
 							<button type="button" class="button" id="aiscb-manual-keywords-btn">
-								<?php esc_html_e( '手动设置关键词', 'ai-seo-content-booster' ); ?>
+								<?php esc_html_e( '设置关键词', 'ai-seo-content-booster' ); ?>
 							</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<p class="submit">
+			<!-- <p class="submit">
 				<button type="submit" name="submit" id="submit" class="button button-primary">
 					<?php esc_html_e( '保存', 'ai-seo-content-booster' ); ?>
 				</button>
-			</p>
+			</p> -->
 		</form>
 	</div>
 
@@ -187,7 +187,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 	</div>
 
 	<!-- Tab 3: 密钥设置 -->
-	<div id="keys-tab" class="tab-content" style="display: none;">
+	<!-- <div id="keys-tab" class="tab-content" style="display: none;">
 		<form method="post" action="options.php" id="aiscb-keys-form">
 			<?php wp_nonce_field( 'aiscb_keys_nonce', 'aiscb_keys_nonce' ); ?>
 			
@@ -287,10 +287,10 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 				</button>
 			</p>
 		</form>
-	</div>
+	</div> -->
 
 	<!-- Tab 3: 文章发布设置 -->
-	<div id="article-tab" class="tab-content" style="display: none;">
+	<!-- <div id="article-tab" class="tab-content" style="display: none;">
 		<form method="post" action="options.php" id="aiscb-article-form">
 			<?php wp_nonce_field( 'aiscb_article_nonce', 'aiscb_article_nonce' ); ?>
 			
@@ -387,7 +387,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 				</button>
 			</p>
 		</form>
-	</div>
+	</div> -->
 </div>
 
 <!-- Modal for Manual Keywords Management -->
@@ -467,22 +467,42 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 							<label for="aiscb-keyword-input"><?php esc_html_e( '关键词', 'ai-seo-content-booster' ); ?></label>
 						</th>
 						<td>
-							<input 
-								type="text" 
-								id="aiscb-keyword-input-single" 
-								class="regular-text" 
+							<input
+								type="text"
+								id="aiscb-keyword-input-single"
+								class="regular-text"
 								placeholder="<?php esc_attr_e( '输入关键词', 'ai-seo-content-booster' ); ?>"
 								style="display: none;"
 							/>
-							<textarea 
-								id="aiscb-keyword-input" 
-								class="regular-text" 
+							<textarea
+								id="aiscb-keyword-input"
+								class="regular-text"
 								placeholder="<?php esc_attr_e( '输入关键词，每行一个', 'ai-seo-content-booster' ); ?>"
 								rows="5"
 								style="width: 100%;"
 							></textarea>
 							<p class="description" id="aiscb-keyword-description">
 								<?php esc_html_e( '每行输入一个关键词，或从其他文档复制粘贴多个关键词。', 'ai-seo-content-booster' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr id="aiscb-keyword-attachment-row" style="display: none;">
+						<th scope="row">
+							<label><?php esc_html_e( '贴子附件', 'ai-seo-content-booster' ); ?></label>
+						</th>
+						<td>
+							<div id="aiscb-attachments-list"></div>
+							<p>
+								<button type="button" class="button" id="aiscb-add-attachment-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+								<a href="#" id="aiscb-add-attachment-url-link" style="margin-left:10px;"><?php esc_html_e( '手工输入附件url', 'ai-seo-content-booster' ); ?></a>
+								<div id="aiscb-add-attachment-url-wrap" style="display:none; margin-top:10px;">
+									<input type="text" id="aiscb-attachment-url-input" class="regular-text" placeholder="https://example.com/image.jpg" style="width:60%;" />
+									<button type="button" class="button" id="aiscb-attachment-url-add-btn"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></button>
+									<button type="button" class="button" id="aiscb-attachment-url-cancel-btn"><?php esc_html_e( '取消', 'ai-seo-content-booster' ); ?></button>
+								</div>
+							</p>
+							<p class="description">
+								<?php esc_html_e( '可添加多个图片或视频', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
 					</tr>

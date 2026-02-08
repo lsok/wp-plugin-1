@@ -40,6 +40,7 @@ class AISCB_Admin
 		add_action('wp_ajax_aiscb_delete_keyword', array($this, 'ajax_delete_keyword'));
 		add_action('wp_ajax_aiscb_bulk_delete_keywords', array($this, 'ajax_bulk_delete_keywords'));
 		add_action('wp_ajax_aiscb_save_keys', array($this, 'ajax_save_keys'));
+		add_action('wp_ajax_aiscb_get_keyword_attachments', array($this, 'ajax_get_keyword_attachments'));
 
 	}
 
@@ -492,6 +493,34 @@ class AISCB_Admin
 		$keyword_id = isset($_POST['keyword_id']) ? absint($_POST['keyword_id']) : 0;
 		$keyword = isset($_POST['keyword']) ? sanitize_text_field(trim($_POST['keyword'])) : '';
 
+		$attachments_raw = isset($_POST['attachments']) ? wp_unslash($_POST['attachments']) : '[]';
+		$attachments = json_decode($attachments_raw, true);
+		if (! is_array($attachments)) {
+			$attachments = array();
+		}
+
+		$sanitized_attachments = array();
+		foreach ($attachments as $att) {
+			if (is_array($att) && isset($att['id']) && intval($att['id']) > 0) {
+				$id = absint($att['id']);
+				$url = wp_get_attachment_url($id);
+				$mime = get_post_mime_type($id);
+				$type = (strpos((string) $mime, 'image') === 0) ? 'image' : ((strpos((string) $mime, 'video') === 0) ? 'video' : 'file');
+				$sanitized_attachments[] = array('type' => $type, 'id' => $id, 'url' => $url);
+			} elseif (is_array($att) && isset($att['url'])) {
+				$url = esc_url_raw($att['url']);
+				// Detect image by common extensions first, then video, else file
+				if (preg_match('/\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i', $url)) {
+					$type = 'image';
+				} elseif (preg_match('/video|\.mp4|\.webm|\.mov|\.avi/i', $url)) {
+					$type = 'video';
+				} else {
+					$type = 'file';
+				}
+				$sanitized_attachments[] = array('type' => $type, 'url' => $url);
+			}
+		}
+
 		if (empty($keyword_id) || empty($keyword)) {
 			wp_send_json_error(array('message' => __('参数错误', 'ai-seo-content-booster')));
 		}
@@ -512,9 +541,9 @@ class AISCB_Admin
 
 		$result = $wpdb->update(
 			$table_name,
-			array('keyword' => $keyword),
+			array('keyword' => $keyword, 'attachment' => wp_json_encode($sanitized_attachments)),
 			array('id' => $keyword_id),
-			array('%s'),
+			array('%s', '%s'),
 			array('%d')
 		);
 
@@ -553,7 +582,7 @@ class AISCB_Admin
 		$total = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} {$where}");
 
 		$keywords = $wpdb->get_results($wpdb->prepare(
-			"SELECT id, keyword, status, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+			"SELECT id, keyword, attachment, status, created_at FROM {$table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d",
 			$per_page,
 			$offset
 		));
@@ -591,6 +620,47 @@ class AISCB_Admin
 
 		wp_send_json_success(array(
 			'keywords' => $keywords,
+		));
+	}
+
+	/**
+	 * AJAX handler: Get keyword with attachments
+	 */
+	public function ajax_get_keyword_attachments()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		$keyword_id = isset($_POST['keyword_id']) ? absint($_POST['keyword_id']) : 0;
+
+		if (empty($keyword_id)) {
+			wp_send_json_error(array('message' => __('参数错误', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_keywords';
+
+		$keyword = $wpdb->get_row($wpdb->prepare(
+			"SELECT id, keyword, attachment FROM {$table_name} WHERE id = %d AND is_deleted = 0",
+			$keyword_id
+		));
+
+		if (! $keyword) {
+			wp_send_json_error(array('message' => __('关键词不存在', 'ai-seo-content-booster')));
+		}
+
+		// Decode attachments
+		$attachments = json_decode($keyword->attachment, true);
+		if (! is_array($attachments)) {
+			$attachments = array();
+		}
+
+		wp_send_json_success(array(
+			'keyword' => $keyword->keyword,
+			'attachments' => $attachments,
 		));
 	}
 
