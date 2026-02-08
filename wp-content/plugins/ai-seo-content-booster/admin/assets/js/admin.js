@@ -494,8 +494,6 @@ var aiscbKeywordAttachments = [];
 				attachments: JSON.stringify(aiscbKeywordAttachments)
 			};
 
-			console.log('Editing keyword:', data);
-
 			// Show loading state
 			var $btn = $(this);
 			var originalText = $btn.text();
@@ -539,8 +537,6 @@ var aiscbKeywordAttachments = [];
 				alert(i18n.enterKeyword);
 				return;
 			}
-
-			console.log('Adding keywords:', keywords);
 
 			// Show loading state
 			var $btn = $(this);
