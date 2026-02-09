@@ -41,7 +41,6 @@ class AISCB_Admin
 		add_action('wp_ajax_aiscb_bulk_delete_keywords', array($this, 'ajax_bulk_delete_keywords'));
 		add_action('wp_ajax_aiscb_save_keys', array($this, 'ajax_save_keys'));
 		add_action('wp_ajax_aiscb_get_keyword_attachments', array($this, 'ajax_get_keyword_attachments'));
-
 	}
 
 	/**
@@ -78,48 +77,59 @@ class AISCB_Admin
 		wp_localize_script('aiscb-admin-js', 'aiscbAdmin', array(
 			'ajaxUrl' => admin_url('admin-ajax.php'),
 			'nonce'   => wp_create_nonce('aiscb_admin_nonce'),
-			'i18n'    => array(
-				'getKeywordsPending'      => __('获取关键词功能待实现', 'ai-seo-content-booster'),
-				'noKeywords'              => __('暂无关键词', 'ai-seo-content-booster'),
-				'edit'                    => __('修改', 'ai-seo-content-booster'),
-				'delete'                  => __('删除', 'ai-seo-content-booster'),
-				'confirmDelete'           => __('确定要删除这个关键词吗？', 'ai-seo-content-booster'),
-				'enterKeyword'            => __('请输入关键词', 'ai-seo-content-booster'),
-				'keywordExists'           => __('该关键词已存在', 'ai-seo-content-booster'),
-				'savePending'             => __('保存功能待实现', 'ai-seo-content-booster'),
-				'addKeyword'              => __('添加关键词', 'ai-seo-content-booster'),
-				'editKeyword'             => __('修改关键词', 'ai-seo-content-booster'),
-				'searchKeywords'          => __('搜索关键词', 'ai-seo-content-booster'),
-				'batchDelete'             => __('批量删除', 'ai-seo-content-booster'),
-				'processed'               => __('已处理', 'ai-seo-content-booster'),
-				'unprocessed'             => __('未处理', 'ai-seo-content-booster'),
-				'loadFailed'              => __('加载失败', 'ai-seo-content-booster'),
-				'networkError'            => __('网络错误，请重试', 'ai-seo-content-booster'),
-				'prevPage'                => __('上一页', 'ai-seo-content-booster'),
-				'pagePrefix'              => __('第 ', 'ai-seo-content-booster'),
-				'pageSeparator'           => __(' 页，共 ', 'ai-seo-content-booster'),
-				'pageSuffix'              => __(' 页', 'ai-seo-content-booster'),
-				'totalItemsPrefix'        => __('（共 ', 'ai-seo-content-booster'),
-				'totalItemsSuffix'        => __(' 条）', 'ai-seo-content-booster'),
-				'nextPage'                => __('下一页', 'ai-seo-content-booster'),
-				'deleteFailed'            => __('删除失败', 'ai-seo-content-booster'),
-				'saving'                  => __('保存中...', 'ai-seo-content-booster'),
-				'operationSuccess'        => __('操作成功', 'ai-seo-content-booster'),
-				'operationFailed'         => __('操作失败', 'ai-seo-content-booster'),
-				'networkErrorWithMsg'     => __('网络错误，请重试。错误信息: ', 'ai-seo-content-booster'),
-				'selectKeywordsToDelete'  => __('请选择要删除的关键词', 'ai-seo-content-booster'),
-				'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
-				'confirmDeleteBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
-				'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
-					// Social post strings
-					'saveSocialPending'       => __('正在保存社媒贴子...', 'ai-seo-content-booster'),
-					'saveSocialSuccess'       => __('社媒贴子已保存', 'ai-seo-content-booster'),
-					'saveSocialFailed'        => __('保存社媒贴子失败', 'ai-seo-content-booster'),
-					'chooseMedia'             => __('从媒体库选择', 'ai-seo-content-booster'),
-					'removeAttachment'        => __('移除', 'ai-seo-content-booster'),
-					'noAttachments'           => __('暂无附件', 'ai-seo-content-booster'),
-			),
+			'i18n'    => $this->get_js_i18n(),
 		));
+	}
+
+	/**
+	 * admin.js 中使用的国际化字符串
+	 */
+	private function get_js_i18n()
+	{
+		return array(
+			// Keyword management strings
+			'getKeywordsPending'      => __('获取关键词功能待实现', 'ai-seo-content-booster'),
+			'noKeywords'              => __('暂无关键词', 'ai-seo-content-booster'),
+			'edit'                    => __('修改', 'ai-seo-content-booster'),
+			'delete'                  => __('删除', 'ai-seo-content-booster'),
+			'confirmDelete'           => __('确定要删除这个关键词吗？', 'ai-seo-content-booster'),
+			'enterKeyword'            => __('请输入关键词', 'ai-seo-content-booster'),
+			'keywordExists'           => __('该关键词已存在', 'ai-seo-content-booster'),
+			'savePending'             => __('保存功能待实现', 'ai-seo-content-booster'),
+			'addKeyword'              => __('添加关键词', 'ai-seo-content-booster'),
+			'editKeyword'             => __('修改关键词', 'ai-seo-content-booster'),
+			'searchKeywords'          => __('搜索关键词', 'ai-seo-content-booster'),
+			'batchDelete'             => __('批量删除', 'ai-seo-content-booster'),
+			'processed'               => __('已处理', 'ai-seo-content-booster'),
+			'unprocessed'             => __('未处理', 'ai-seo-content-booster'),
+			'loading'              => __('加载中', 'ai-seo-content-booster'),
+			'loadFailed'              => __('加载失败', 'ai-seo-content-booster'),
+			'networkError'            => __('网络错误，请重试', 'ai-seo-content-booster'),
+			'prevPage'                => __('上一页', 'ai-seo-content-booster'),
+			'pagePrefix'              => __('第 ', 'ai-seo-content-booster'),
+			'pageSeparator'           => __(' 页，共 ', 'ai-seo-content-booster'),
+			'pageSuffix'              => __(' 页', 'ai-seo-content-booster'),
+			'totalItemsPrefix'        => __('（共 ', 'ai-seo-content-booster'),
+			'totalItemsSuffix'        => __(' 条）', 'ai-seo-content-booster'),
+			'nextPage'                => __('下一页', 'ai-seo-content-booster'),
+			'deleteFailed'            => __('删除失败', 'ai-seo-content-booster'),
+			'saving'                  => __('保存中...', 'ai-seo-content-booster'),
+			'operationSuccess'        => __('操作成功', 'ai-seo-content-booster'),
+			'operationFailed'         => __('操作失败', 'ai-seo-content-booster'),
+			'networkErrorWithMsg'     => __('网络错误，请重试。错误信息: ', 'ai-seo-content-booster'),
+			'selectKeywordsToDelete'  => __('请选择要删除的关键词', 'ai-seo-content-booster'),
+			'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
+			'confirmDeleteBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
+			'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
+			
+			// Social post strings
+			'saveSocialPending'       => __('正在保存社媒贴子...', 'ai-seo-content-booster'),
+			'saveSocialSuccess'       => __('社媒贴子已保存', 'ai-seo-content-booster'),
+			'saveSocialFailed'        => __('保存社媒贴子失败', 'ai-seo-content-booster'),
+			'chooseMedia'             => __('从媒体库选择', 'ai-seo-content-booster'),
+			'removeAttachment'        => __('移除', 'ai-seo-content-booster'),
+			'noAttachments'           => __('暂无附件', 'ai-seo-content-booster'),
+		);
 	}
 
 	/**
@@ -777,7 +787,7 @@ class AISCB_Admin
 		$platforms = isset($_POST['platforms']) ? array_map('sanitize_text_field', (array) $_POST['platforms']) : array();
 
 		// Validation: content required and at least one platform
-		$plain_content = trim( wp_strip_all_tags( $content ) );
+		$plain_content = trim(wp_strip_all_tags($content));
 		if (empty($plain_content)) {
 			wp_send_json_error(array('message' => __('帖子内容不能为空', 'ai-seo-content-booster')));
 		}

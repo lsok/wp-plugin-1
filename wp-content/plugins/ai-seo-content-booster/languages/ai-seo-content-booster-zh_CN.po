@@ -196,10 +196,6 @@ msgstr "取消"
 msgid "AI SEO Booster"
 msgstr "AI SEO 增强器"
 
-#: includes/class-admin.php:70
-msgid "加载中..."
-msgstr "加载中..."
-
 #: includes/class-admin.php:71
 msgid "获取关键词功能待实现"
 msgstr "获取关键词功能待实现"
@@ -245,7 +241,11 @@ msgstr "已处理"
 msgid "未处理"
 msgstr "未处理"
 
-#: includes/class-admin.php:85
+#: includes/class-admin.php:96
+msgid "加载中"
+msgstr "加载中..."
+
+#: includes/class-admin.php:97
 msgid "加载失败"
 msgstr "加载失败"
 

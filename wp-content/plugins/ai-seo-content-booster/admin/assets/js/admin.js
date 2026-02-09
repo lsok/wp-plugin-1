@@ -72,7 +72,7 @@ var aiscbKeywordAttachments = [];
 	// Show existing keywords
 	function existingKeywords() {
 		var $existingKeywords = $('#existing-keywords');
-		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + wp.i18n.__('加载中…', 'ai-seo-content-booster'));
+		$existingKeywords.html('<span class="spinner is-active" style="float: none;position:relative;top:-3px"></span> ' + i18n.loading);
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
