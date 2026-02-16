@@ -72,6 +72,7 @@ class AISCB_Admin
 		wp_enqueue_media();
 
 		wp_enqueue_script('aiscb-admin-js', plugin_dir_url(dirname(__FILE__)) . 'admin/assets/js/admin.js', array('jquery', 'wp-i18n'), '1.0.0', true);
+
 		wp_enqueue_style('aiscb-admin-css', plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/admin.css', array(), '1.0.0');
 
 		wp_localize_script('aiscb-admin-js', 'aiscbAdmin', array(
@@ -93,11 +94,15 @@ class AISCB_Admin
 			'edit'                    => __('修改', 'ai-seo-content-booster'),
 			'delete'                  => __('删除', 'ai-seo-content-booster'),
 			'confirmDelete'           => __('确定要删除这个关键词吗？', 'ai-seo-content-booster'),
+			'confirmDeletePost'           => __('确定要删除这个贴子吗？', 'ai-seo-content-booster'),
 			'enterKeyword'            => __('请输入关键词', 'ai-seo-content-booster'),
 			'keywordExists'           => __('该关键词已存在', 'ai-seo-content-booster'),
 			'savePending'             => __('保存功能待实现', 'ai-seo-content-booster'),
 			'addKeyword'              => __('添加关键词', 'ai-seo-content-booster'),
+			'selectColumn'              => __('请选择列', 'ai-seo-content-booster'),
 			'editKeyword'             => __('修改关键词', 'ai-seo-content-booster'),
+			'enterAttachmentUrl'             => __('请输入附件 URL', 'ai-seo-content-booster'),
+			'invalidUrl'             => __('请输入有效的 URL', 'ai-seo-content-booster'),
 			'searchKeywords'          => __('搜索关键词', 'ai-seo-content-booster'),
 			'batchDelete'             => __('批量删除', 'ai-seo-content-booster'),
 			'processed'               => __('已处理', 'ai-seo-content-booster'),
@@ -121,12 +126,11 @@ class AISCB_Admin
 			'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
 			'confirmDeleteBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
 			'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
-			
-			// Social post strings
 			'saveSocialPending'       => __('正在保存社媒贴子...', 'ai-seo-content-booster'),
 			'saveSocialSuccess'       => __('社媒贴子已保存', 'ai-seo-content-booster'),
 			'saveSocialFailed'        => __('保存社媒贴子失败', 'ai-seo-content-booster'),
 			'chooseMedia'             => __('从媒体库选择', 'ai-seo-content-booster'),
+			'choose'             => __('选择', 'ai-seo-content-booster'),
 			'removeAttachment'        => __('移除', 'ai-seo-content-booster'),
 			'noAttachments'           => __('暂无附件', 'ai-seo-content-booster'),
 		);
@@ -821,9 +825,9 @@ class AISCB_Admin
 				array('%d')
 			);
 			if ($result === false) {
-				wp_send_json_error(array('message' => __('更新社媒贴子失败', 'ai-seo-content-booster')));
+				wp_send_json_error(array('message' => __('更新贴子失败', 'ai-seo-content-booster')));
 			}
-			wp_send_json_success(array('message' => __('社媒贴子已更新', 'ai-seo-content-booster')));
+			wp_send_json_success(array('message' => __('贴子已更新', 'ai-seo-content-booster')));
 		} else {
 			$result = $wpdb->insert(
 				$table_name,
@@ -831,9 +835,9 @@ class AISCB_Admin
 				$formats
 			);
 			if ($result === false) {
-				wp_send_json_error(array('message' => __('保存社媒贴子失败', 'ai-seo-content-booster')));
+				wp_send_json_error(array('message' => __('保存贴子失败', 'ai-seo-content-booster')));
 			}
-			wp_send_json_success(array('message' => __('社媒贴子已保存', 'ai-seo-content-booster')));
+			wp_send_json_success(array('message' => __('贴子已保存', 'ai-seo-content-booster')));
 		}
 	}
 

@@ -35,7 +35,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 			<?php esc_html_e( '关键词管理', 'ai-seo-content-booster' ); ?>
 		</a>
 		<a href="#social-tab" class="nav-tab" data-tab="social-tab">
-			<?php esc_html_e( '社媒贴子管理', 'ai-seo-content-booster' ); ?>
+			<?php esc_html_e( '社媒帖子管理', 'ai-seo-content-booster' ); ?>
 		</a>
 		<a href="#keys-tab" class="nav-tab" data-tab="keys-tab">
 			<?php esc_html_e( '密钥设置', 'ai-seo-content-booster' ); ?>
@@ -64,7 +64,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 								<span class="spinner is-active" id="aiscb-keywords-spinner" style="float: none; margin-left: 10px; display: none;"></span>
 							</p>
 							<p class="description">
-								<?php esc_html_e( '根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表', 'ai-seo-content-booster' ); ?>
+								<?php esc_html_e( '根据 title、description 和 WooCommerce 产品名称自动生成关键词列表', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -117,8 +117,8 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 					<tr>
 						<th style="width:40px;">ID</th>
 						<th><?php esc_html_e( '内容', 'ai-seo-content-booster' ); ?></th>
-						<th style="width:140px;"><?php esc_html_e( '平台', 'ai-seo-content-booster' ); ?></th>
 						<th style="width:120px;"><?php esc_html_e( '附件', 'ai-seo-content-booster' ); ?></th>
+						<th style="width:140px;"><?php esc_html_e( '平台', 'ai-seo-content-booster' ); ?></th>
 						<th style="width:140px;"><?php esc_html_e( '创建时间', 'ai-seo-content-booster' ); ?></th>
 						<th style="width:120px; text-align:left;"><?php esc_html_e( '操作', 'ai-seo-content-booster' ); ?></th>
 					</tr>
@@ -165,7 +165,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 						</tr>
 						<tr>
 							<th scope="row">
-								<label><?php esc_html_e( '选择平台', 'ai-seo-content-booster' ); ?></label>
+								<label><?php esc_html_e( '发布平台', 'ai-seo-content-booster' ); ?></label>
 							</th>
 							<td>
 								<label><input type="checkbox" name="aiscb_social_platforms[]" value="facebook" /> <?php esc_html_e( 'Facebook', 'ai-seo-content-booster' ); ?></label><br/>
@@ -488,7 +488,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 					</tr>
 					<tr id="aiscb-keyword-attachment-row" style="display: none;">
 						<th scope="row">
-							<label><?php esc_html_e( '贴子附件', 'ai-seo-content-booster' ); ?></label>
+							<label><?php esc_html_e( '附件', 'ai-seo-content-booster' ); ?></label>
 						</th>
 						<td>
 							<div id="aiscb-attachments-list"></div>
@@ -502,7 +502,7 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 								</div>
 							</p>
 							<p class="description">
-								<?php esc_html_e( '可添加多个图片或视频', 'ai-seo-content-booster' ); ?>
+								<?php esc_html_e( '图片或视频会自动插入到文章内容中', 'ai-seo-content-booster' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -537,7 +537,9 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 								<td>
 									<input type="file" id="aiscb-import-file" accept=".xls,.xlsx,.csv" />
 									<p class="description" style="margin-top:8px;">
-										<?php esc_html_e( '支持格式：.xlsx, .xls, .csv', 'ai-seo-content-booster' ); ?>
+										<?php 
+										esc_html_e( '支持格式：.xlsx, .xls, .csv', 'ai-seo-content-booster' ); 
+										?>
 									</p>
 									<div id="aiscb-import-column-wrap" style="margin-top:10px; display:none;">
 										<label for="aiscb-import-column-select"><?php esc_html_e( '选择要导入的列', 'ai-seo-content-booster' ); ?></label>

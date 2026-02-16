@@ -45,6 +45,9 @@ msgstr "您的站点"
 msgid "关键词管理"
 msgstr "关键词管理"
 
+msgid "社媒帖子管理"
+msgstr "社媒帖子管理"
+
 #: admin/views/settings.php:31
 msgid "密钥设置"
 msgstr "密钥设置"
@@ -63,17 +66,41 @@ msgstr "获取推荐关键词"
 
 #: admin/views/settings.php:57
 msgid ""
-"根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+"根据 title、description 和 WooCommerce 产品名称自动生成关键词列表"
 msgstr ""
-"根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+"根据 title、description 和 WooCommerce 产品名称自动生成关键词列表"
 
 #: admin/views/settings.php:63
 msgid "关键词列表"
 msgstr "关键词列表"
 
+msgid "设置关键词"
+msgstr "手动设置关键词"
+
 #: admin/views/settings.php:73 admin/views/settings.php:245
 msgid "手动设置关键词"
 msgstr "手动设置关键词"
+
+msgid "导入关键词"
+msgstr "导入关键词"
+
+msgid "选择文件"
+msgstr "选择文件"
+
+msgid "支持格式：.xlsx, .xls, .csv"
+msgstr "支持格式：.xlsx, .xls, .csv"
+
+msgid "选择要导入的列"
+msgstr "选择要导入的列"
+
+msgid "请选择列"
+msgstr "请选择列"
+
+msgid "导入"
+msgstr "导入"
+
+msgid "输入关键词，每行一个"
+msgstr "输入关键词，每行一个"
 
 #: admin/views/settings.php:82 admin/views/settings.php:134
 #: admin/views/settings.php:234 admin/views/settings.php:339
@@ -186,7 +213,34 @@ msgstr "输入关键词"
 
 #: admin/views/settings.php:330
 msgid "每行输入一个关键词，或从其他文档复制粘贴多个关键词。"
-msgstr ""
+msgstr "每行输入一个关键词，或从其他文档复制粘贴多个关键词。"
+
+msgid "附件"
+msgstr "附件"
+
+msgid "暂无附件"
+msgstr "暂无附件"
+
+msgid "从媒体库选择"
+msgstr "从媒体库选择"
+
+msgid "选择"
+msgstr "选择"
+
+msgid "手工输入附件url"
+msgstr "手工输入附件url"
+
+msgid "请输入附件 URL"
+msgstr "请输入附件 URL"
+
+msgid "请输入有效的 URL"
+msgstr "请输入有效的 URL"
+
+msgid "移除"
+msgstr "移除"
+
+msgid "图片或视频会自动插入到文章内容中"
+msgstr "图片或视频会自动插入到文章内容中"
 
 #: admin/views/settings.php:342
 msgid "取消"
@@ -215,6 +269,9 @@ msgstr "删除"
 #: includes/class-admin.php:75
 msgid "确定要删除这个关键词吗？"
 msgstr "确定要删除这个关键词吗？"
+
+msgid "确定要删除这个贴子吗？"
+msgstr "确定要删除这个贴子吗？"
 
 #: includes/class-admin.php:76 includes/class-admin.php:134
 msgid "请输入关键词"
@@ -378,3 +435,49 @@ msgstr[0] "成功添加 %d 个关键词"
 #: includes/class-admin.php:217
 msgid "%d keyword are repeated"
 msgstr[0] "%d 个关键词重复"
+
+msgid "搜索贴子内容"
+msgstr "搜索贴子内容"
+
+msgid "搜索"
+msgstr "搜索"
+
+msgid "全部"
+msgstr "全部"
+
+msgid "贴子内容"
+msgstr "贴子内容"
+
+msgid "贴子附件"
+msgstr "贴子附件"
+
+msgid "可添加多个图片或视频"
+msgstr "可添加多个图片或视频"
+
+msgid "发布平台"
+msgstr "发布平台"
+
+msgid "贴子已保存"
+msgstr "贴子已保存"
+
+msgid "贴子已更新"
+msgstr "贴子已更新"
+
+msgid "保存贴子失败"
+msgstr "保存贴子失败"
+
+msgid "更新贴子失败"
+msgstr "更新贴子失败"
+
+msgid "内容"
+msgstr "内容"
+
+msgid "平台"
+msgstr "平台"
+
+msgid "创建时间"
+msgstr "创建时间"
+
+
+
+

@@ -329,7 +329,7 @@ var aiscbKeywordAttachments = [];
 			success: function (response) {
 				if (response.success && response.data && Array.isArray(response.data.headers) && response.data.headers.length > 0) {
 					var headers = response.data.headers;
-					$select.append('<option value="">' + escapeHtml('请选择列') + '</option>');
+					$select.append('<option value="">' + escapeHtml(i18n.selectColumn) + '</option>');
 					headers.forEach(function (h, idx) {
 						$select.append('<option value="' + idx + '">' + escapeHtml(h) + '</option>');
 					});
@@ -672,7 +672,7 @@ var aiscbKeywordAttachments = [];
 		e.preventDefault();
 		var frame = wp.media({
 			title: i18n.chooseMedia || 'Choose Media',
-			button: { text: i18n.chooseMedia || 'Choose' },
+			button: { text: i18n.choose || 'Choose' },
 			multiple: true,
 			library: { type: ['image', 'video'] }
 		});
@@ -695,7 +695,7 @@ var aiscbKeywordAttachments = [];
 		e.preventDefault();
 		var frame = wp.media({
 			title: i18n.chooseMedia || 'Choose Media',
-			button: { text: i18n.chooseMedia || 'Choose' },
+			button: { text: i18n.choose || 'Choose' },
 			multiple: true,
 			library: { type: ['image', 'video'] }
 		});
@@ -1061,12 +1061,12 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 			var $tr = $('<tr>');
 			$tr.append('<td>' + p.id + '</td>');
 			$tr.append('<td>' + escapeHtml(content) + '</td>');
-			$tr.append('<td>' + escapeHtml(platform.join(', ')) + '</td>');
 			$tr.append('<td>' + attachments.length + '</td>');
+			$tr.append('<td>' + escapeHtml(platform.join(', ')) + '</td>');
 			$tr.append('<td>' + (p.created_at || '') + '</td>');
 			var $actions = $('<td>');
-			$actions.append('<button type="button" class="button aiscb-edit-post" data-post="' + encodeURIComponent(JSON.stringify(p)) + '" style="margin-right:6px;">编辑</button>');
-			$actions.append('<button type="button" class="button aiscb-delete-post" data-id="' + p.id + '">删除</button>');
+			$actions.append('<button type="button" class="button aiscb-edit-post" data-post="' + encodeURIComponent(JSON.stringify(p)) + '" style="margin-right:6px;">' + i18n.edit + '</button>');
+			$actions.append('<button type="button" class="button aiscb-delete-post" data-id="' + p.id + '">' + i18n.delete + '</button>');
 			$tr.append($actions);
 			$tbody.append($tr);
 		});
@@ -1098,7 +1098,7 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 
 	// Delete post
 	$(document).on('click', '.aiscb-delete-post', function () {
-		if (!confirm('确定要删除该贴子吗？')) return;
+		if (!confirm(i18n.confirmDeletePost)) return;
 		var postId = $(this).data('id');
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,

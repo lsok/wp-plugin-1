@@ -45,6 +45,9 @@ msgstr "YOUR SITE HERE"
 msgid "关键词管理"
 msgstr "Keyword Management"
 
+msgid "社媒帖子管理"
+msgstr "Social media post management"
+
 #: admin/views/settings.php:31
 msgid "密钥设置"
 msgstr "Key Settings"
@@ -62,8 +65,8 @@ msgid "获取推荐关键词"
 msgstr "Get Recommended Keywords"
 
 #: admin/views/settings.php:57
-msgid "根据首页 title、description 和 WooCommerce 产品名称自动生成关键词列表"
-msgstr "Automatically generate keyword list based on homepage title, description, and WooCommerce product names"
+msgid "根据 title、description 和 WooCommerce 产品名称自动生成关键词列表"
+msgstr "Automatically generate a keyword list based on the title, description, and WooCommerce product name."
 
 #: admin/views/settings.php:63
 msgid "关键词列表"
@@ -77,10 +80,64 @@ msgstr "Separate keywords with commas"
 msgid "每个关键词用逗号分隔"
 msgstr "Each keyword separated by comma"
 
+msgid "设置关键词"
+msgstr "Keyword settings"
+
 #: admin/views/settings.php:82
 #: admin/views/settings.php:254
 msgid "手动设置关键词"
 msgstr "Manually Set Keywords"
+
+msgid "导入关键词"
+msgstr "Import keywords"
+
+msgid "选择文件"
+msgstr "Select file"
+
+msgid "支持格式：.xlsx, .xls, .csv"
+msgstr "Supported formats：.xlsx, .xls, .csv"
+
+msgid "选择要导入的列"
+msgstr "Select the column to import."
+
+msgid "请选择列"
+msgstr "Please select a column"
+
+msgid "导入"
+msgstr "Import"
+
+msgid "输入关键词，每行一个"
+msgstr "Enter keywords, one per line."
+
+msgid "每行输入一个关键词，或从其他文档复制粘贴多个关键词。"
+msgstr "Enter one keyword per line, or copy and paste multiple keywords from other documents."
+
+msgid "附件"
+msgstr "Attachments"
+
+msgid "暂无附件"
+msgstr "No attachments yet"
+
+msgid "从媒体库选择"
+msgstr "Select from media library"
+
+msgid "选择"
+msgstr "Select"
+
+msgid "手工输入附件url"
+msgstr "Manually enter the attachment URL"
+
+msgid "请输入附件 URL"
+msgstr "Please enter attachment URL"
+
+msgid "请输入有效的 URL"
+msgstr "Please enter a valid URL"
+
+msgid "移除"
+msgstr "Remove"
+
+msgid "图片或视频会自动插入到文章内容中"
+msgstr "Images or videos will be automatically inserted into the article content."
 
 #: admin/views/settings.php:91
 #: admin/views/settings.php:143
@@ -223,6 +280,9 @@ msgstr "Delete"
 #: includes/class-admin.php:67
 msgid "确定要删除这个关键词吗？"
 msgstr "Are you sure you want to delete this keyword?"
+
+msgid "确定要删除这个贴子吗？"
+msgstr "Are you sure you want to delete this post?"
 
 #: includes/class-admin.php:68
 #: includes/class-admin.php:100
@@ -383,3 +443,44 @@ msgid_plural "Successfully added %d keywords"
 msgid "%d keyword are repeated"
 msgid_plural "%d keywords are repeated"
 
+msgid "搜索贴子内容"
+msgstr "Search post content"
+
+msgid "搜索"
+msgstr "Search"
+
+msgid "全部"
+msgstr "All"
+
+msgid "贴子内容"
+msgstr "Post content"
+
+msgid "贴子附件"
+msgstr "Post attachments"
+
+msgid "可添加多个图片或视频"
+msgstr "Multiple images or videos can be added."
+
+msgid "发布平台"
+msgstr "publishing platform"
+
+msgid "贴子已保存"
+msgstr "The post has been saved."
+
+msgid "贴子已更新"
+msgstr "The post has been updated."
+
+msgid "保存贴子失败"
+msgstr "Post saved failed"
+
+msgid "更新贴子失败"
+msgstr "Post update failed"
+
+msgid "内容"
+msgstr "Content"
+
+msgid "平台"
+msgstr "Platform"
+
+msgid "创建时间"
+msgstr "Creation Time"
