@@ -123,8 +123,9 @@ class AISCB_Admin
 			'operationFailed'         => __('操作失败', 'ai-seo-content-booster'),
 			'networkErrorWithMsg'     => __('网络错误，请重试。错误信息: ', 'ai-seo-content-booster'),
 			'selectKeywordsToDelete'  => __('请选择要删除的关键词', 'ai-seo-content-booster'),
-			'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
-			'confirmDeleteBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
+			'confirmDeleteKeywordsBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
+			'confirmDeleteKeywordsBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
+			'confirmDeleteKeywordsBulkSuffixSingle' => __(' keyword?', 'ai-seo-content-booster'),
 			'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
 			'saveSocialPending'       => __('正在保存社媒贴子...', 'ai-seo-content-booster'),
 			'saveSocialSuccess'       => __('社媒贴子已保存', 'ai-seo-content-booster'),
@@ -745,7 +746,7 @@ class AISCB_Admin
 		}
 
 		/* translators: %d: 成功删除的关键词数量 */
-		wp_send_json_success(array('message' => sprintf(__('成功删除 %d 个关键词', 'ai-seo-content-booster'), $result)));
+		wp_send_json_success(array('message' => sprintf(_n('Successfully deleted %d keyword', 'Successfully deleted %d keywords', $result, 'ai-seo-content-booster'), $result)));
 	}
 
 	/**

@@ -353,11 +353,17 @@ msgstr "Delete successful"
 msgid "批量删除失败"
 msgstr "Batch delete failed"
 
+
+
+
 #. translators: %d: 成功删除的关键词数量
 #: includes/class-admin.php:288
-#, php-format
-msgid "成功删除 %d 个关键词"
-msgstr "Successfully deleted %d keywords"
+#: msgid "Successfully deleted %d keyword"
+#: msgid_plural "Successfully deleted %d keywords"
+
+
+
+
 
 #: includes/class-admin.php:96
 msgid "加载中"
@@ -431,17 +437,12 @@ msgstr "Are you sure you want to delete the selected "
 msgid " 个关键词吗？"
 msgstr " keywords?"
 
+msgid " keyword?"
+msgstr " keyword?"
+
 #: includes/class-admin.php:93
 msgid "删除成功"
 msgstr "Delete successful"
-
-#: includes/class-admin.php:216
-msgid "Successfully added %d keyword"
-msgid_plural "Successfully added %d keywords"
-
-#: includes/class-admin.php:217
-msgid "%d keyword are repeated"
-msgid_plural "%d keywords are repeated"
 
 msgid "搜索贴子内容"
 msgstr "Search post content"

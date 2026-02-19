@@ -362,12 +362,16 @@ msgstr "网络错误，请重试。错误信息: "
 msgid "请选择要删除的关键词"
 msgstr "请选择要删除的关键词"
 
+
 #: includes/class-admin.php:100
 msgid "确定要删除选中的 "
 msgstr "确定要删除选中的 "
 
 #: includes/class-admin.php:101
-msgid " 个关键词吗？"
+# msgid " 个关键词吗？"
+# msgstr " 个关键词吗？"
+
+msgid " keyword?"
 msgstr " 个关键词吗？"
 
 #: includes/class-admin.php:102 includes/class-admin.php:371
@@ -377,10 +381,6 @@ msgstr "删除成功"
 #: includes/class-admin.php:103
 msgid "添加"
 msgstr "添加"
-
-#: includes/class-admin.php:104
-msgid " 个关键词吗？"
-msgstr " 个关键词吗？"
 
 #: includes/class-admin.php:105
 msgid "重复"
@@ -424,9 +424,8 @@ msgstr "批量删除失败"
 
 #. translators: %d: 成功删除的关键词数量
 #: includes/class-admin.php:406
-#, php-format
-msgid "成功删除 %d 个关键词"
-msgstr "成功删除 %d 个关键词"
+msgid "Successfully deleted %d keyword"
+msgstr[0] "成功删除 %d 个关键词"
 
 #: includes/class-admin.php:216
 msgid "Successfully added %d keyword"

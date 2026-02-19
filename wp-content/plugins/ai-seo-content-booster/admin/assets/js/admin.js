@@ -130,7 +130,7 @@ var aiscbKeywordAttachments = [];
 					keywordsData = response.data.keywords;
 					currentPage = response.data.pagination.current_page;
 					renderKeywordsTable();
-					renderPagination(response.data.pagination);
+					renderPagination(response.data.pagination, 'keywords');
 					updateBulkDeleteButton();
 				} else {
 					var errorMsg = response.data && response.data.message ? response.data.message : i18n.loadFailed;
@@ -181,8 +181,8 @@ var aiscbKeywordAttachments = [];
 	}
 
 	// Render pagination
-	function renderPagination(pagination) {
-		var $pagination = $('#aiscb-keywords-pagination');
+	function renderPagination(pagination, moduleName) {
+		var $pagination = $('#aiscb-' + moduleName + '-pagination');
 		$pagination.empty();
 
 		if (pagination.total_pages <= 1) {
@@ -601,7 +601,15 @@ var aiscbKeywordAttachments = [];
 		var page = $(this).data('page');
 		if (page && !$(this).prop('disabled')) {
 			currentPage = page;
-			loadKeywords(page, currentSearch);
+
+			// Determine which module's pagination was clicked
+			var grandparent = this.parentElement.parentElement;
+			var moduleName = $(grandparent).attr('id').replace('aiscb-', '').replace('-pagination', '');
+			if (moduleName === 'keywords') {
+				loadKeywords(page, currentSearch);
+			} else if (moduleName === 'posts') {
+				loadAiscbPosts(page, postsCurrentSearch);
+			}
 		}
 	});
 
@@ -632,7 +640,13 @@ var aiscbKeywordAttachments = [];
 			return;
 		}
 
-		if (!confirm(i18n.confirmDeleteBulkPrefix + checkedIds.length + i18n.confirmDeleteBulkSuffix)) {
+		var confirmDeleteKeywordsBulkSuffix = '';
+		if (checkedIds.length === 1) {
+			confirmDeleteKeywordsBulkSuffix = i18n.confirmDeleteKeywordsBulkSuffixSingle;
+		} else {
+			confirmDeleteKeywordsBulkSuffix = i18n.confirmDeleteKeywordsBulkSuffix;
+		}
+		if (!confirm(i18n.confirmDeleteKeywordsBulkPrefix + checkedIds.length + confirmDeleteKeywordsBulkSuffix)) {
 			return;
 		}
 
@@ -1025,7 +1039,7 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 					var posts = response.data.posts;
 					var pagination = response.data.pagination;
 					renderAiscbPostsTable(posts);
-					renderAiscbPostsPagination(pagination);
+					renderPagination(pagination, 'posts');
 						// update posts count header
 						updateAiscbPostsCount();
 					// ensure header active state
@@ -1071,30 +1085,6 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 			$tbody.append($tr);
 		});
 	}
-
-	function renderAiscbPostsPagination(pagination) {
-		var $wrap = $('#aiscb-posts-pagination');
-		$wrap.empty();
-		if (!pagination || pagination.total_pages <= 1) return;
-
-		var html = '<div class="aiscb-pagination-wrapper">';
-		if (pagination.current_page > 1) html += '<button type="button" class="button aiscb-posts-page-btn" data-page="' + (pagination.current_page - 1) + '">上一页</button>';
-		else html += '<button type="button" class="button" disabled>上一页</button>';
-		html += '<span style="margin:0 8px;">第 ' + pagination.current_page + ' 页 / 共 ' + pagination.total_pages + ' 页（共 ' + pagination.total_items + ' 条）</span>';
-		if (pagination.current_page < pagination.total_pages) html += '<button type="button" class="button aiscb-posts-page-btn" data-page="' + (pagination.current_page + 1) + '">下一页</button>';
-		else html += '<button type="button" class="button" disabled>下一页</button>';
-		html += '</div>';
-		$wrap.html(html);
-	}
-
-	// Pagination click
-	$(document).on('click', '.aiscb-posts-page-btn', function () {
-		var page = $(this).data('page');
-		if (page) {
-			postsCurrentPage = page;
-			loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
-		}
-	});
 
 	// Delete post
 	$(document).on('click', '.aiscb-delete-post', function () {
