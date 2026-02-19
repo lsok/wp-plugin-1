@@ -440,6 +440,12 @@ msgstr " keywords?"
 msgid " keyword?"
 msgstr " keyword?"
 
+msgid " 个贴子吗？"
+msgstr " posts?"
+
+msgid " post?"
+msgstr " post?"
+
 #: includes/class-admin.php:93
 msgid "删除成功"
 msgstr "Delete successful"

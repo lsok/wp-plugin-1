@@ -29,6 +29,7 @@ class AISCB_Admin
 		add_action('wp_ajax_aiscb_save_social_post', array($this, 'ajax_save_social_post'));
 		add_action('wp_ajax_aiscb_get_social_posts', array($this, 'ajax_get_social_posts'));
 		add_action('wp_ajax_aiscb_delete_social_post', array($this, 'ajax_delete_social_post'));
+		add_action('wp_ajax_aiscb_bulk_delete_social_posts', array($this, 'ajax_bulk_delete_social_posts'));
 		add_action('wp_ajax_aiscb_get_social_count', array($this, 'ajax_get_social_count'));
 		add_action('wp_ajax_aiscb_get_keywords', array($this, 'ajax_get_keywords'));
 		add_action('wp_ajax_aiscb_get_existing_keywords', array($this, 'ajax_get_existing_keywords'));
@@ -123,7 +124,7 @@ class AISCB_Admin
 			'operationFailed'         => __('操作失败', 'ai-seo-content-booster'),
 			'networkErrorWithMsg'     => __('网络错误，请重试。错误信息: ', 'ai-seo-content-booster'),
 			'selectKeywordsToDelete'  => __('请选择要删除的关键词', 'ai-seo-content-booster'),
-			'confirmDeleteKeywordsBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
+			'confirmDeleteBulkPrefix' => __('确定要删除选中的 ', 'ai-seo-content-booster'),
 			'confirmDeleteKeywordsBulkSuffix' => __(' 个关键词吗？', 'ai-seo-content-booster'),
 			'confirmDeleteKeywordsBulkSuffixSingle' => __(' keyword?', 'ai-seo-content-booster'),
 			'deleteSuccess'           => __('删除成功', 'ai-seo-content-booster'),
@@ -134,6 +135,9 @@ class AISCB_Admin
 			'choose'             => __('选择', 'ai-seo-content-booster'),
 			'removeAttachment'        => __('移除', 'ai-seo-content-booster'),
 			'noAttachments'           => __('暂无附件', 'ai-seo-content-booster'),
+			'selectPostsToDelete'     => __('请选择要删除的贴子', 'ai-seo-content-booster'),
+			'confirmDeletePostsBulkSuffix' => __(' 个贴子吗？', 'ai-seo-content-booster'),
+			'confirmDeletePostsBulkSuffixSingle' => __(' post?', 'ai-seo-content-booster'),
 		);
 	}
 
@@ -715,6 +719,41 @@ class AISCB_Admin
 	}
 
 	/**
+	 * AJAX handler: Bulk delete social posts (soft delete)
+	 */
+	public function ajax_bulk_delete_social_posts()
+	{
+		check_ajax_referer('aiscb_admin_nonce', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(array('message' => __('权限不足', 'ai-seo-content-booster')));
+		}
+
+		$post_ids = isset($_POST['post_ids']) ? array_map('absint', (array) $_POST['post_ids']) : array();
+
+		if (empty($post_ids)) {
+			wp_send_json_error(array('message' => __('参数错误', 'ai-seo-content-booster')));
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'aiscb_social';
+
+		$placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
+
+		$result = $wpdb->query($wpdb->prepare(
+			"UPDATE {$table_name} SET is_deleted = 1 WHERE id IN ({$placeholders})",
+			$post_ids
+		));
+
+		if ($result === false) {
+			wp_send_json_error(array('message' => __('批量删除失败', 'ai-seo-content-booster')));
+		}
+
+		/* translators: %d: 成功删除的贴子数量 */
+		wp_send_json_success(array('message' => sprintf(_n('Successfully deleted %d post', 'Successfully deleted %d posts', $result, 'ai-seo-content-booster'), $result)));
+	}
+
+	/**
 	 * AJAX handler: Bulk delete keywords
 	 */
 	public function ajax_bulk_delete_keywords()
@@ -923,6 +962,7 @@ class AISCB_Admin
 
 		wp_send_json_success(array('message' => __('删除成功', 'ai-seo-content-booster')));
 	}
+
 
 	/**
 	 * AJAX handler: Get social posts count

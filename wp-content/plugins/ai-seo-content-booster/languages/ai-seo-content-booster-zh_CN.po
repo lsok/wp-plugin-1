@@ -374,6 +374,12 @@ msgstr "确定要删除选中的 "
 msgid " keyword?"
 msgstr " 个关键词吗？"
 
+# msgid " 个贴子吗？"
+# msgstr " 个贴子吗？"
+
+msgid " post?"
+msgstr " 个贴子吗？"
+
 #: includes/class-admin.php:102 includes/class-admin.php:371
 msgid "删除成功"
 msgstr "删除成功"
@@ -426,6 +432,9 @@ msgstr "批量删除失败"
 #: includes/class-admin.php:406
 msgid "Successfully deleted %d keyword"
 msgstr[0] "成功删除 %d 个关键词"
+
+msgid "Successfully deleted %d post"
+msgstr[0] "成功删除 %d 个贴子"
 
 #: includes/class-admin.php:216
 msgid "Successfully added %d keyword"

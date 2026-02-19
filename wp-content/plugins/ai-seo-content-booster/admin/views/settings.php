@@ -102,8 +102,12 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 		<div class="aiscb-posts-header">
 			<div>
 				<a href="#" class="aiscb-posts-all-link" id="aiscb-posts-all"><?php esc_html_e( '全部', 'ai-seo-content-booster' ); ?>（<span class="aiscb-posts-count"><?php echo intval( $aiscb_social_count ); ?></span>）</a>
-				 |  
+				 | 
 				<a href="#" class="aiscb-posts-add-link" id="aiscb-posts-add"><?php esc_html_e( '添加', 'ai-seo-content-booster' ); ?></a>
+				
+				<a id="aiscb-posts-bulk-delete-btn" style="display:none; margin-left:10px;cursor:pointer;">
+					<?php esc_html_e( '批量删除', 'ai-seo-content-booster' ); ?>
+				</a>
 			</div>
 			<div style="display:flex; gap:8px; align-items:center;">
 				<input type="search" id="aiscb-posts-search" class="regular-text" placeholder="<?php esc_attr_e( '搜索贴子内容', 'ai-seo-content-booster' ); ?>" />
@@ -115,7 +119,9 @@ $aiscb_social_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$aiscb_social_table
 			<table class="wp-list-table widefat fixed striped" id="aiscb-posts-table">
 				<thead>
 					<tr>
-						<th style="width:40px;">ID</th>
+						<th class="check-column" style="width:30px;">
+							<input type="checkbox" id="aiscb-select-all-posts" style="position: relative;top:12px;left:3px" />
+						</th>
 						<th><?php esc_html_e( '内容', 'ai-seo-content-booster' ); ?></th>
 						<th style="width:120px;"><?php esc_html_e( '附件', 'ai-seo-content-booster' ); ?></th>
 						<th style="width:140px;"><?php esc_html_e( '平台', 'ai-seo-content-booster' ); ?></th>

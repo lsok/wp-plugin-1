@@ -63,11 +63,11 @@
 	var currentSearch = '';
 	var keywordsData = [];
 
-// Social attachments state
-var aiscbSocialAttachments = [];
+	// Social attachments state
+	var aiscbSocialAttachments = [];
 
-// Keyword attachments state
-var aiscbKeywordAttachments = [];
+	// Keyword attachments state
+	var aiscbKeywordAttachments = [];
 
 	// Show existing keywords
 	function existingKeywords() {
@@ -402,20 +402,20 @@ var aiscbKeywordAttachments = [];
 	$(document).on('click', '.aiscb-edit-keyword', function () {
 		var keywordId = $(this).data('keyword-id');
 		var keyword = $(this).data('keyword');
-		
+
 		// Show loading state
 		$('#aiscb-keyword-edit-title').text(i18n.editKeyword);
 		$('#aiscb-keyword-input-single').val(keyword).data('keyword-id', keywordId).show();
 		$('#aiscb-keyword-input').hide();
 		$('#aiscb-keyword-description').hide();
-		
+
 		// Show attachment row for editing
 		$('#aiscb-keyword-attachment-row').show();
-		
+
 		// Clear previous attachments
 		aiscbKeywordAttachments = [];
 		renderAiscbKeywordAttachments();
-		
+
 		// Get attachments for this keyword
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
@@ -438,7 +438,7 @@ var aiscbKeywordAttachments = [];
 				console.error('AJAX Error:', status, error);
 			}
 		});
-		
+
 		$('#aiscb-keyword-edit-modal').show();
 	});
 
@@ -485,7 +485,7 @@ var aiscbKeywordAttachments = [];
 		if (isEdit) {
 			// Edit single keyword
 			var keywordId = $('#aiscb-keyword-input-single').data('keyword-id');
-			
+
 			var data = {
 				action: 'aiscb_edit_keyword',
 				nonce: aiscbAdmin.nonce,
@@ -532,7 +532,7 @@ var aiscbKeywordAttachments = [];
 			});
 		} else {
 			// Add multiple keywords (batch)
-			var keywords = keywordInput.split('\n').map(function(kw) { return kw.trim(); }).filter(function(kw) { return kw.length > 0; });
+			var keywords = keywordInput.split('\n').map(function (kw) { return kw.trim(); }).filter(function (kw) { return kw.length > 0; });
 			if (keywords.length === 0) {
 				alert(i18n.enterKeyword);
 				return;
@@ -646,13 +646,13 @@ var aiscbKeywordAttachments = [];
 		} else {
 			confirmDeleteKeywordsBulkSuffix = i18n.confirmDeleteKeywordsBulkSuffix;
 		}
-		if (!confirm(i18n.confirmDeleteKeywordsBulkPrefix + checkedIds.length + confirmDeleteKeywordsBulkSuffix)) {
+		if (!confirm(i18n.confirmDeleteBulkPrefix + checkedIds.length + confirmDeleteKeywordsBulkSuffix)) {
 			return;
 		}
 
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
-		 type: 'POST',
+			type: 'POST',
 			data: {
 				action: 'aiscb_bulk_delete_keywords',
 				nonce: aiscbAdmin.nonce,
@@ -704,7 +704,7 @@ var aiscbKeywordAttachments = [];
 		frame.open();
 	});
 
-// Open media library to add attachments for social posts
+	// Open media library to add attachments for social posts
 	$('#aiscb-social-form #aiscb-add-attachment-btn').on('click', function (e) {
 		e.preventDefault();
 		var frame = wp.media({
@@ -727,81 +727,81 @@ var aiscbKeywordAttachments = [];
 		frame.open();
 	});
 
-// Manual URL input for attachments: show/hide and add/cancel handlers for keywords
-$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-add-attachment-url-link', function (e) {
+	// Manual URL input for attachments: show/hide and add/cancel handlers for keywords
+	$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-add-attachment-url-link', function (e) {
 		e.preventDefault();
 		var $wrap = $('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap');
 		$wrap.toggle();
 		if ($wrap.is(':visible')) { $('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').focus(); }
-});
+	});
 
-// Manual URL input for attachments: show/hide and add/cancel handlers for social posts
-$(document).on('click', '#aiscb-social-form #aiscb-add-attachment-url-link', function (e) {
+	// Manual URL input for attachments: show/hide and add/cancel handlers for social posts
+	$(document).on('click', '#aiscb-social-form #aiscb-add-attachment-url-link', function (e) {
 		e.preventDefault();
 		var $wrap = $('#aiscb-social-form #aiscb-add-attachment-url-wrap');
 		$wrap.toggle();
 		if ($wrap.is(':visible')) { $('#aiscb-social-form #aiscb-attachment-url-input').focus(); }
-});
+	});
 
-// Cancel manual URL input for keywords
-$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-cancel-btn', function (e) {
+	// Cancel manual URL input for keywords
+	$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-cancel-btn', function (e) {
 		e.preventDefault();
- 		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
- 		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
-});
+		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
+		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
+	});
 
-// Cancel manual URL input for social posts
-$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-cancel-btn', function (e) {
+	// Cancel manual URL input for social posts
+	$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-cancel-btn', function (e) {
 		e.preventDefault();
- 		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
- 		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
-});
+		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
+		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
+	});
 
-// Add manual URL as attachment for keywords
-$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-add-btn', function (e) {
+	// Add manual URL as attachment for keywords
+	$(document).on('click', '#aiscb-keyword-edit-modal #aiscb-attachment-url-add-btn', function (e) {
 		e.preventDefault();
- 		var url = ($('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val() || '').trim();
- 		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
+		var url = ($('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val() || '').trim();
+		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
 
- 		// Basic URL validation
- 		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
+		// Basic URL validation
+		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
 
- 		// Guess mime by extension
- 		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
- 		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
- 		var mime = '';
- 		if (imgExt.test(url)) { mime = 'image/*'; }
- 		else if (vidExt.test(url)) { mime = 'video/*'; }
+		// Guess mime by extension
+		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
+		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
+		var mime = '';
+		if (imgExt.test(url)) { mime = 'image/*'; }
+		else if (vidExt.test(url)) { mime = 'video/*'; }
 
- 		aiscbKeywordAttachments.push({ id: 0, url: url, mime: mime });
- 		renderAiscbKeywordAttachments();
- 		// hide and clear input
- 		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
- 		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
-});
+		aiscbKeywordAttachments.push({ id: 0, url: url, mime: mime });
+		renderAiscbKeywordAttachments();
+		// hide and clear input
+		$('#aiscb-keyword-edit-modal #aiscb-attachment-url-input').val('');
+		$('#aiscb-keyword-edit-modal #aiscb-add-attachment-url-wrap').hide();
+	});
 
-// Add manual URL as attachment for social posts
-$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', function (e) {
+	// Add manual URL as attachment for social posts
+	$(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', function (e) {
 		e.preventDefault();
- 		var url = ($('#aiscb-social-form #aiscb-attachment-url-input').val() || '').trim();
- 		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
+		var url = ($('#aiscb-social-form #aiscb-attachment-url-input').val() || '').trim();
+		if (!url) { alert(i18n.enterAttachmentUrl || '请输入附件 URL'); return; }
 
- 		// Basic URL validation
- 		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
+		// Basic URL validation
+		if (!/^https?:\/\//i.test(url)) { alert(i18n.invalidUrl || '请输入有效的 URL（以 http:// 或 https:// 开头）'); return; }
 
- 		// Guess mime by extension
- 		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
- 		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
- 		var mime = '';
- 		if (imgExt.test(url)) { mime = 'image/*'; }
- 		else if (vidExt.test(url)) { mime = 'video/*'; }
+		// Guess mime by extension
+		var imgExt = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i;
+		var vidExt = /\.(mp4|webm|ogg|mov|avi)(\?|$)/i;
+		var mime = '';
+		if (imgExt.test(url)) { mime = 'image/*'; }
+		else if (vidExt.test(url)) { mime = 'video/*'; }
 
- 		aiscbSocialAttachments.push({ id: 0, url: url, mime: mime });
- 		renderAiscbAttachments();
- 		// hide and clear input
- 		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
- 		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
-});
+		aiscbSocialAttachments.push({ id: 0, url: url, mime: mime });
+		renderAiscbAttachments();
+		// hide and clear input
+		$('#aiscb-social-form #aiscb-attachment-url-input').val('');
+		$('#aiscb-social-form #aiscb-add-attachment-url-wrap').hide();
+	});
 
 	// Render attachments list for keywords
 	function renderAiscbKeywordAttachments() {
@@ -1040,8 +1040,8 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 					var pagination = response.data.pagination;
 					renderAiscbPostsTable(posts);
 					renderPagination(pagination, 'posts');
-						// update posts count header
-						updateAiscbPostsCount();
+					// update posts count header
+					updateAiscbPostsCount();
 					// ensure header active state
 					setPostsHeaderActive('list');
 				} else {
@@ -1073,7 +1073,7 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 			if (content.length > 120) content = content.substring(0, 120) + '...';
 
 			var $tr = $('<tr>');
-			$tr.append('<td>' + p.id + '</td>');
+			$tr.append('<th scope="row" class="check-column"><input type="checkbox" class="aiscb-post-checkbox" value="' + p.id + '" /></th>');
 			$tr.append('<td>' + escapeHtml(content) + '</td>');
 			$tr.append('<td>' + attachments.length + '</td>');
 			$tr.append('<td>' + escapeHtml(platform.join(', ')) + '</td>');
@@ -1085,6 +1085,68 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 			$tbody.append($tr);
 		});
 	}
+
+	// Posts bulk-delete helpers
+	function updatePostsBulkDeleteButton() {
+		var checkedCount = $('.aiscb-post-checkbox:checked').length;
+		if (checkedCount > 0) {
+			$('#aiscb-posts-bulk-delete-btn').show().text(i18n.batchDelete + '(' + checkedCount + ')');
+		} else {
+			$('#aiscb-posts-bulk-delete-btn').hide();
+		}
+	}
+
+	// Select-all for posts
+	$(document).on('change', '#aiscb-select-all-posts', function () {
+		$('.aiscb-post-checkbox').prop('checked', $(this).prop('checked'));
+		updatePostsBulkDeleteButton();
+	});
+
+	// Individual post checkbox change
+	$(document).on('change', '.aiscb-post-checkbox', function () {
+		updatePostsBulkDeleteButton();
+		var total = $('.aiscb-post-checkbox').length;
+		var checked = $('.aiscb-post-checkbox:checked').length;
+		$('#aiscb-select-all-posts').prop('checked', total === checked && total > 0);
+	});
+
+	// Bulk delete posts
+	$('#aiscb-posts-bulk-delete-btn').on('click', function () {
+		var ids = [];
+		$('.aiscb-post-checkbox:checked').each(function () { ids.push($(this).val()); });
+		if (ids.length === 0) {
+			alert(i18n.selectPostsToDelete || '请选择要删除的贴子');
+			return;
+		}
+
+		var confirmDeletePostsBulkSuffix = '';
+		if (ids.length === 1) {
+			confirmDeletePostsBulkSuffix = i18n.confirmDeletePostsBulkSuffixSingle;
+		} else {
+			confirmDeletePostsBulkSuffix = i18n.confirmDeletePostsBulkSuffix;
+		}
+		if (!confirm(i18n.confirmDeleteBulkPrefix + ids.length + confirmDeletePostsBulkSuffix)) {
+			return;
+		}
+
+		$.ajax({
+			url: aiscbAdmin.ajaxUrl,
+			type: 'POST',
+			data: { action: 'aiscb_bulk_delete_social_posts', nonce: aiscbAdmin.nonce, post_ids: ids },
+			success: function (response) {
+				if (response.success) {
+					$('#aiscb-select-all-posts').prop('checked', false);
+					loadAiscbPosts(postsCurrentPage, postsCurrentSearch);
+					updateAiscbPostsCount();
+					updatePostsBulkDeleteButton();
+					alert(response.data && response.data.message ? response.data.message : i18n.deleteSuccess || '删除成功');
+				} else {
+					alert(response.data && response.data.message ? response.data.message : i18n.deleteFailed || '删除失败');
+				}
+			},
+			error: function () { alert(i18n.networkError || '网络错误'); }
+		});
+	});
 
 	// Delete post
 	$(document).on('click', '.aiscb-delete-post', function () {
@@ -1140,15 +1202,15 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 	});
 
 	// Handle keys form submission
-	$('#aiscb-keys-form').on('submit', function(e) {
+	$('#aiscb-keys-form').on('submit', function (e) {
 		e.preventDefault();
-		
+
 		var $form = $(this);
 		var $submitBtn = $form.find('button[type="submit"]');
 		var originalText = $submitBtn.text();
-		
+
 		$submitBtn.prop('disabled', true).text(i18n.saving);
-		
+
 		$.ajax({
 			url: aiscbAdmin.ajaxUrl,
 			type: 'POST',
@@ -1161,17 +1223,17 @@ $(document).on('click', '#aiscb-social-form #aiscb-attachment-url-add-btn', func
 				aiscb_youtube_key: $('#aiscb_youtube_key').val(),
 				aiscb_openrouter_key: $('#aiscb_openrouter_key').val()
 			},
-			success: function(response) {
+			success: function (response) {
 				if (response.success) {
 					alert(response.data.message);
 				} else {
 					alert(response.data.message);
 				}
 			},
-			error: function(xhr, status, error) {
+			error: function (xhr, status, error) {
 				alert(i18n.networkError + error);
 			},
-			complete: function() {
+			complete: function () {
 				$submitBtn.prop('disabled', false).text(originalText);
 			}
 		});
